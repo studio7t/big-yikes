@@ -1,3 +1,8 @@
+import 'dotenv/config';
 import { start } from './api';
+import { performMigrations } from './db/migrate';
 
-start();
+(async () => {
+  await performMigrations();
+  start();
+})();

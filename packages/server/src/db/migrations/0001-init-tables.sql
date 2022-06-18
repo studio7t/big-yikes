@@ -1,0 +1,5 @@
+CREATE TABLE IF NOT EXISTS yikes (
+  id serial PRIMARY KEY,
+  content TEXT NOT NULL,
+  date TIMESTAMPTZ
+);
