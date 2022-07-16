@@ -6,6 +6,13 @@
   "license": "MIT",
   "scripts": {
     "client": "yarn --cwd ./packages/client",
-    "server": "yarn --cwd ./packages/server"
+    "lib": "yarn --cwd ./packages/lib",
+    "server": "yarn --cwd ./packages/server",
+    "dev": "concurrently -n \"client,lib\" \"yarn client dev\" \"yarn lib dev\"",
+    "lint": "yarn client lint && yarn lib lint",
+    "postinstall": "yarn client; yarn lib"
+  },
+  "devDependencies": {
+    "concurrently": "^7.2.2"
   }
 }

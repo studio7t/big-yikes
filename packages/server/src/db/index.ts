@@ -1,10 +1,8 @@
 import { Pool } from 'pg';
 
-const pool = new Pool();
+export const pool = new Pool({ connectionString: process.env.POSTGRES_URL });
 
-async function query(text: string, params: string[]) {
+export const query = async (text: string, params?: string[]) => {
   const res = await pool.query(text, params);
-  return res;
-}
-
-export default { query };
+  return res.rows;
+};
