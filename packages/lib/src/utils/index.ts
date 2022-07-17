@@ -1,3 +1,3 @@
 export * from './block-graph';
-export * from './hash-blocks';
+export * from './hash-structure';
 export * from './validation';
