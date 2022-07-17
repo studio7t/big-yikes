@@ -1,11 +1,11 @@
 import { nanoid } from 'nanoid';
 
-interface Vector2D {
+export interface Vector2D {
   x: number;
   y: number;
 }
 
-interface BlockType {
+export interface BlockType {
   coordinates: Vector2D[];
   color: string;
 }
