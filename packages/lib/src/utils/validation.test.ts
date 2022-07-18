@@ -4,7 +4,7 @@ import {
   isOverlapping,
   isUnderground,
   isValidBlock,
-  isValidStructure,
+  areValidBlocks,
 } from './validation';
 
 describe('isOverlapping', () => {
@@ -67,11 +67,11 @@ describe('isValidBlock', () => {
   });
 });
 
-describe('isValidStructure', () => {
-  it('should return whether a structure of blocks is valid', () => {
-    expect(isValidStructure([...blocks.slice(0, 2)])).toEqual(true); // A,B
-    expect(isValidStructure([...blocks.slice(0, 4)])).toEqual(true); // A,B,C,D
-    expect(isValidStructure(blocks)).toEqual(false); // A,B,C,D,E
-    expect(isValidStructure(floatingBoys)).toEqual(false); // A,B... but hovering 1 unit off the ground
+describe('areValidBlocks', () => {
+  it('should return whether a list of blocks is valid', () => {
+    expect(areValidBlocks([...blocks.slice(0, 2)])).toEqual(true); // A,B
+    expect(areValidBlocks([...blocks.slice(0, 4)])).toEqual(true); // A,B,C,D
+    expect(areValidBlocks(blocks)).toEqual(false); // A,B,C,D,E
+    expect(areValidBlocks(floatingBoys)).toEqual(false); // A,B... but hovering 1 unit off the ground
   });
 });

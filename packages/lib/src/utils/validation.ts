@@ -2,7 +2,7 @@ import { intersectionWith, isEqual } from 'lodash';
 import { Block } from '../models/block';
 import { blockGraph, isConnected } from './block-graph';
 
-export const isValidStructure = (blocks: Block[]) => {
+export const areValidBlocks = (blocks: Block[]) => {
   if (!isConnected(blockGraph(blocks))) return false;
 
   for (let i = 0; i < blocks.length; i++) {
