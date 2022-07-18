@@ -26,6 +26,8 @@ CREATE TABLE IF NOT EXISTS structures {
 
 CREATE TABLE IF NOT EXISTS blocks {
   id serial PRIMARY KEY,
+  position_x integer NOT NULL,
+  position_y integer NOT NULL,
   block_type_id integer NOT NULL REFERENCES block_types (id),
   structure_id integer NOT NULL REFERENCES structures (id)
 }
