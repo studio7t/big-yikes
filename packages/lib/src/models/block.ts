@@ -1,9 +1,5 @@
 import { nanoid } from 'nanoid';
-
-export interface Vector2D {
-  x: number;
-  y: number;
-}
+import { Vector2D } from '../types';
 
 export interface BlockType {
   coordinates: Vector2D[];
