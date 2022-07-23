@@ -6,7 +6,7 @@ import { Block } from './block';
 export type BlockFingerprint = { type: string; position: Vector2D };
 export type BlockFingerprintSet = Set<BlockFingerprint>;
 
-export class BlockStructure {
+export class Structure {
   blocks: Block[];
 
   constructor(blocks: Block[]) {
@@ -36,7 +36,7 @@ export class BlockStructure {
   //   })
   // }
 
-  isEqual(other: BlockStructure) {
+  isEqual(other: Structure) {
     return isEqual(this.fingerprintSet, other.fingerprintSet);
   }
 }

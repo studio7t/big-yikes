@@ -1,6 +1,6 @@
 import { blockTypes } from '../test/data';
 import { Block } from './block';
-import { BlockStructure } from './block-structure';
+import { Structure } from './structure';
 
 const blocks1 = [
   new Block(blockTypes['1x1'], { x: 0, y: 0 }),
@@ -18,11 +18,11 @@ const blocks3 = [
   new Block(blockTypes['1x1'], { x: 1, y: 1 }),
 ];
 
-const structure1 = new BlockStructure(blocks1);
-const structure2 = new BlockStructure(blocks2);
-const structure3 = new BlockStructure(blocks3);
+const structure1 = new Structure(blocks1);
+const structure2 = new Structure(blocks2);
+const structure3 = new Structure(blocks3);
 
-describe('blockStructure', () => {
+describe('Structure', () => {
   it('converts block arrays to a unique set', () => {
     expect(structure1.fingerprintSet).toEqual(
       new Set([

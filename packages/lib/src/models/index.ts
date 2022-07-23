@@ -1,2 +1,2 @@
 export * from './block';
-export * from './block-structure';
+export * from './structure';
