@@ -53,6 +53,7 @@ export class StructuresRepo {
 
     const structureId = newStructure.id;
 
+    // TODO use transaction to prevent incomplete data
     for (const block of structure.blocks) {
       await BlocksRepo.add(block, structureId);
     }
