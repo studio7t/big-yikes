@@ -14,9 +14,6 @@ export class BlockTypesRepo {
   }
 
   static async add(blockType: Omit<BlockType, 'id'>) {
-    const existingId = await BlockTypesRepo.getId(blockType);
-    if (existingId !== null) return existingId;
-
     let newBlockType: { id: number };
     try {
       newBlockType = (

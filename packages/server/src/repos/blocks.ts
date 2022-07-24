@@ -2,7 +2,6 @@ import { Block } from '@big-yikes/lib';
 import { query } from '../db';
 
 export class BlocksRepo {
-  // expects the block type to already exist
   static async add(block: Block, structureId: number) {
     let newBlock: { id: number };
     try {

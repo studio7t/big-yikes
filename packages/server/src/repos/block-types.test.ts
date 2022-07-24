@@ -3,11 +3,9 @@ import { blockTypes } from '../test/data';
 import { BlockTypesRepo } from './block-types';
 
 describe('BlockTypesRepo', () => {
-  let blockTypeId: number;
-
   beforeEach(async () => {
     await query('DELETE FROM block_types');
-    blockTypeId = (await BlockTypesRepo.add(blockTypes['1x1'])) as number;
+    await BlockTypesRepo.add(blockTypes['1x1']);
   });
 
   it('should add a block type to the db', async () => {
@@ -19,11 +17,6 @@ describe('BlockTypesRepo', () => {
     expect(JSON.parse(addedBlockType.coordinates)).toEqual(
       blockTypes['1x1'].coordinates
     );
-  });
-
-  it('should return the id of a block type if it has already been added', async () => {
-    const addedBlockTypeId = await BlockTypesRepo.add(blockTypes['1x1']);
-    expect(addedBlockTypeId).toEqual(blockTypeId);
   });
 
   it('should fail to add a block using pre-existing coordinates', async () => {
