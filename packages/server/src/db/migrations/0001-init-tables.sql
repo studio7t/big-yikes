@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS discoveries (
 
 CREATE TABLE IF NOT EXISTS block_types (
   id serial PRIMARY KEY,
-  coords text NOT NULL UNIQUE,
+  coordinates text NOT NULL UNIQUE,
   color text NOT NULL UNIQUE
 );
 
