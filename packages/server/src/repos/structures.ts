@@ -45,9 +45,6 @@ export class StructuresRepo {
   }
 
   static async add(structure: Structure) {
-    const alreadyExists = await StructuresRepo.getId(structure);
-    if (alreadyExists !== null) return alreadyExists;
-
     const newStructure: { id: number } = (
       await query('INSERT INTO structures (hash) VALUES ($1) RETURNING id', [
         structure.hash,

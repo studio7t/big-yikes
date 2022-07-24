@@ -8,8 +8,6 @@ const blocks1 = [new Block(blockTypes['1x1'], { x: 0, y: 0 })];
 const structure1 = new Structure(blocks1);
 
 describe('StructuresRepo', () => {
-  let structureId: number;
-
   beforeAll(async () => {
     await BlockTypesRepo.add(blockTypes['1x1']);
   });
@@ -18,7 +16,7 @@ describe('StructuresRepo', () => {
     await query('DELETE FROM blocks');
     await query('DELETE FROM structures');
 
-    structureId = await StructuresRepo.add(structure1);
+    await StructuresRepo.add(structure1);
   });
 
   it('should add a structure to the db', async () => {
@@ -27,11 +25,6 @@ describe('StructuresRepo', () => {
 
     const addedStructure = allStructures[0];
     expect(addedStructure.hash).toEqual(structure1.hash);
-  });
-
-  it('should return the id of a structure if it has already been added', async () => {
-    const addedStructureId = await StructuresRepo.add(structure1);
-    expect(addedStructureId).toEqual(structureId);
   });
 
   it('should check if an identical structure exists', async () => {
