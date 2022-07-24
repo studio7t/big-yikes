@@ -1,0 +1,65 @@
+import { query } from '../db';
+import { blockTypes } from '../test/data';
+import { BlockTypesRepo } from './block-types';
+
+describe('BlockTypesRepo', () => {
+  let blockTypeId: number;
+
+  beforeEach(async () => {
+    await query('DELETE FROM block_types');
+    blockTypeId = (await BlockTypesRepo.add(blockTypes['1x1'])) as number;
+  });
+
+  it('should add a block type to the db', async () => {
+    const allBlockTypes = await query('SELECT * FROM block_types');
+    expect(allBlockTypes.length).toEqual(1);
+
+    const addedBlockType = allBlockTypes[0];
+    expect(addedBlockType.color).toEqual(blockTypes['1x1'].color);
+    expect(JSON.parse(addedBlockType.coordinates)).toEqual(
+      blockTypes['1x1'].coordinates
+    );
+  });
+
+  it('should return the id of a block type if it has already been added', async () => {
+    const addedBlockTypeId = await BlockTypesRepo.add(blockTypes['1x1']);
+    expect(addedBlockTypeId).toEqual(blockTypeId);
+  });
+
+  it('should fail to add a block using pre-existing coordinates', async () => {
+    const blockTypeId = await BlockTypesRepo.add({
+      coordinates: blockTypes['1x1'].coordinates,
+      color: 'new-color',
+    });
+    expect(blockTypeId).toBeNull();
+
+    const allBlockTypes = await query('SELECT * FROM block_types');
+    expect(allBlockTypes.length).toEqual(1);
+  });
+
+  it('should fail to add a block using pre-existing color', async () => {
+    const blockTypeId = await BlockTypesRepo.add({
+      coordinates: [{ x: 100, y: 100 }],
+      color: blockTypes['1x1'].color,
+    });
+    expect(blockTypeId).toBeNull();
+
+    const allBlockTypes = await query('SELECT * FROM block_types');
+    expect(allBlockTypes.length).toEqual(1);
+  });
+
+  it('should get the id of block type', async () => {
+    const blockTypeId = await BlockTypesRepo.getId(blockTypes['1x1']);
+    expect(blockTypeId).not.toBeNull();
+
+    const blockType = (
+      await query('SELECT * FROM block_types WHERE id = $1', [
+        (blockTypeId as number).toString(),
+      ])
+    )[0];
+    expect(blockType.color).toEqual(blockTypes['1x1'].color);
+    expect(JSON.parse(blockType.coordinates)).toEqual(
+      blockTypes['1x1'].coordinates
+    );
+  });
+});
