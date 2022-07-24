@@ -3,7 +3,7 @@ import objectHash from 'object-hash';
 import { Vector2D } from '../types';
 import { Block } from './block';
 
-export type BlockFingerprint = { type: string; position: Vector2D };
+export type BlockFingerprint = { type: number; position: Vector2D };
 export type BlockFingerprintSet = Set<BlockFingerprint>;
 
 export class Structure {
@@ -25,7 +25,7 @@ export class Structure {
     return new Set(
       this.blocks.map((b) => {
         // TODO replace type identifier with something more reliable
-        return { type: b.type.color, position: b.position };
+        return { type: b.type.id, position: b.position };
       })
     );
   }
