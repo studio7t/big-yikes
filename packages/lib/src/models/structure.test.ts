@@ -26,8 +26,8 @@ describe('Structure', () => {
   it('converts block arrays to a unique set', () => {
     expect(structure1.fingerprintSet).toEqual(
       new Set([
-        { type: blocks1[0].type.color, position: blocks1[0].position },
-        { type: blocks1[1].type.color, position: blocks1[1].position },
+        { type: blocks1[0].type.id, position: blocks1[0].position },
+        { type: blocks1[1].type.id, position: blocks1[1].position },
       ])
     );
   });

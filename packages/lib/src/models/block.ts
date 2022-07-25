@@ -2,6 +2,7 @@ import { nanoid } from 'nanoid';
 import { Vector2D } from '../types';
 
 export interface BlockType {
+  id: number;
   coordinates: Vector2D[];
   color: string;
 }
