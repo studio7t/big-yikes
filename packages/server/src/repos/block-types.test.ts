@@ -40,19 +40,4 @@ describe('BlockTypesRepo', () => {
     const allBlockTypes = await query('SELECT * FROM block_types');
     expect(allBlockTypes.length).toEqual(1);
   });
-
-  it('should get the id of block type', async () => {
-    const blockTypeId = await BlockTypesRepo.getId(blockTypes['1x1']);
-    expect(blockTypeId).not.toBeNull();
-
-    const blockType = (
-      await query('SELECT * FROM block_types WHERE id = $1', [
-        (blockTypeId as number).toString(),
-      ])
-    )[0];
-    expect(blockType.color).toEqual(blockTypes['1x1'].color);
-    expect(JSON.parse(blockType.coordinates)).toEqual(
-      blockTypes['1x1'].coordinates
-    );
-  });
 });

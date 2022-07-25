@@ -2,17 +2,6 @@ import { BlockType } from '@big-yikes/lib';
 import { query } from '../db';
 
 export class BlockTypesRepo {
-  static async getId(blockType: Omit<BlockType, 'id'>) {
-    const matchingBlockTypes: { id: number }[] = await query(
-      'SELECT id FROM block_types WHERE coordinates = $1 and color = $2',
-      [JSON.stringify(blockType.coordinates), blockType.color]
-    );
-
-    if (!matchingBlockTypes.length) return null;
-
-    return matchingBlockTypes[0].id;
-  }
-
   static async add(blockType: Omit<BlockType, 'id'>) {
     let newBlockType: { id: number };
     try {
