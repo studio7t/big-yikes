@@ -24,17 +24,10 @@ export class Structure {
   get fingerprintSet(): BlockFingerprintSet {
     return new Set(
       this.blocks.map((b) => {
-        // TODO replace type identifier with something more reliable
         return { type: b.type.id, position: b.position };
       })
     );
   }
-
-  // static fromFingerprints(fingerprints: BlockFingerprint[]) {
-  //   return fingerprints.map((f) => {
-  //     return
-  //   })
-  // }
 
   isEqual(other: Structure) {
     return isEqual(this.fingerprintSet, other.fingerprintSet);
