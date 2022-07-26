@@ -15,7 +15,7 @@ describe('DiscoveriesRepo', () => {
 
   beforeAll(async () => {
     await BlockTypesRepo.add(blockTypes['1x1']);
-    structureId = await StructuresRepo.add(structure1);
+    structureId = (await StructuresRepo.add(structure1)) as number;
 
     userId = (await UsersRepo.add({ id: 'test-id' })) as string;
   });
