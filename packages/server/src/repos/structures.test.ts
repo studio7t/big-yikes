@@ -27,6 +27,24 @@ describe('StructuresRepo', () => {
     expect(addedStructure.hash).toEqual(structure1.hash);
   });
 
+  it('should not add a structure with bad blocks', async () => {
+    const blocks2 = [new Block(blockTypes['1x2'], { x: 0, y: 0 })];
+    const structure2 = new Structure(blocks2);
+
+    let allStructures = await query('SELECT * FROM structures');
+    let allBlocks = await query('SELECT * FROM blocks');
+    expect(allStructures.length).toEqual(1);
+    expect(allBlocks.length).toEqual(1);
+
+    const structureId = await StructuresRepo.add(structure2);
+    expect(structureId).toEqual(null);
+
+    allStructures = await query('SELECT * FROM structures');
+    allBlocks = await query('SELECT * FROM blocks');
+    expect(allStructures.length).toEqual(1);
+    expect(allBlocks.length).toEqual(1);
+  });
+
   it('should check if an identical structure exists', async () => {
     const structureId = await StructuresRepo.getId(structure1);
     expect(structureId).not.toBeNull();

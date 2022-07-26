@@ -1,5 +1,10 @@
 import { Block, Structure } from '@big-yikes/lib';
-import { query } from '../db';
+import {
+  beginTransaction,
+  commitTransaction,
+  query,
+  rollbackTransaction,
+} from '../db';
 import { BlocksRepo } from './blocks';
 
 export class StructuresRepo {
@@ -45,6 +50,8 @@ export class StructuresRepo {
   }
 
   static async add(structure: Structure) {
+    await beginTransaction();
+
     const newStructure: { id: number } = (
       await query('INSERT INTO structures (hash) VALUES ($1) RETURNING id', [
         structure.hash,
@@ -53,10 +60,15 @@ export class StructuresRepo {
 
     const structureId = newStructure.id;
 
-    // TODO use transaction to prevent incomplete data
     for (const block of structure.blocks) {
-      await BlocksRepo.add(block, structureId);
+      const blockId = await BlocksRepo.add(block, structureId);
+      if (blockId === null) {
+        await rollbackTransaction();
+        return null;
+      }
     }
+
+    await commitTransaction();
 
     return structureId;
   }
