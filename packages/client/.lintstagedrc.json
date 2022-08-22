@@ -1,4 +1,4 @@
 {
-  "*": "prettier --check --ignore-unknown",
-  "*.{js,jsx,ts,tsx}": "eslint"
+  "./src/**/*": "prettier --check",
+  "./src/**/*.{js,jsx,ts,tsx}": "eslint"
 }
