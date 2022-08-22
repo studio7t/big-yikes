@@ -1,21 +1,18 @@
 import { FastifyInstance } from 'fastify';
 import { db } from '../../db';
 import { Static, Type } from '@sinclair/typebox';
-import { Block, Structure } from '@big-yikes/lib';
+import {
+  Block,
+  BlockTypeSlugSchema,
+  Structure,
+  Vector2DSchema,
+} from '@big-yikes/lib';
 
 const BASE_PATH = '/discovery';
 
-const Vector2D = Type.Object({ x: Type.Number(), y: Type.Number() });
-
-const BlockTypeSchema = Type.Object({
-  slug: Type.String(),
-  coordinates: Type.Array(Vector2D),
-  color: Type.String(),
-});
-
 const BlockSchema = Type.Object({
-  type: BlockTypeSchema,
-  position: Vector2D,
+  type: BlockTypeSlugSchema,
+  position: Vector2DSchema,
 });
 
 const StructureSchema = Type.Object({
@@ -41,10 +38,11 @@ export const discoveryRoutes = async (fastify: FastifyInstance) => {
         return;
       }
 
+      // TODO validate against bin
+
       const structureId = await insertStructureIfNotExists(structure);
 
       // TODO replace user ids with actual value
-
       const alreadyDiscovered = await collection.findOne({
         structure_id: structureId,
         user_id: 1,
@@ -56,7 +54,7 @@ export const discoveryRoutes = async (fastify: FastifyInstance) => {
 
       await collection.insertOne({
         structure_id: structureId,
-        time: new Date().getUTCMilliseconds(),
+        time: Date.now(),
         user_id: 1,
       });
 

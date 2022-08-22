@@ -21,7 +21,7 @@ export class Structure {
   get fingerprintSet(): BlockFingerprintSet {
     return new Set(
       this.blocks.map((b) => {
-        return { type: b.type.slug, position: b.position };
+        return { type: b.type, position: b.position };
       })
     );
   }
