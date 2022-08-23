@@ -13,7 +13,8 @@
     "@big-yikes/lib": "link:../lib",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
-    "react-p5": "^1.3.30"
+    "react-p5": "^1.3.30",
+    "zustand": "^4.1.1"
   },
   "devDependencies": {
     "@types/react": "^18.0.0",
