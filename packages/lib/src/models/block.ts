@@ -1,4 +1,4 @@
-import { intersectionWith, isEqual } from 'lodash';
+import { find, intersectionWith, isEqual } from 'lodash';
 import { nanoid } from 'nanoid';
 import { blockTypes, BlockTypeSlug } from '../block-types';
 import { Vector2D } from '../types';
@@ -29,6 +29,32 @@ export class Block {
     for (const other of others) {
       if (intersectionWith(this.coordinates, other.coordinates, isEqual).length)
         return true;
+    }
+
+    return false;
+  }
+
+  isAdjacentTo(other: Block) {
+    for (const b1Coord of this.coordinates) {
+      if (
+        find(
+          other.coordinates,
+          (b2Coord) =>
+            isEqual(b2Coord, { x: b1Coord.x - 1, y: b1Coord.y }) ||
+            isEqual(b2Coord, { x: b1Coord.x + 1, y: b1Coord.y }) ||
+            isEqual(b2Coord, { x: b1Coord.x, y: b1Coord.y - 1 }) ||
+            isEqual(b2Coord, { x: b1Coord.x, y: b1Coord.y + 1 })
+        )
+      )
+        return true;
+    }
+
+    return false;
+  }
+
+  isAdjacentToAnother(others: Block[]) {
+    for (const other of others) {
+      if (this.isAdjacentTo(other)) return true;
     }
 
     return false;

@@ -1,4 +1,3 @@
-import { find, isEqual } from 'lodash';
 import { Block } from './block';
 
 type AdjacencyList = Record<string, Set<string>>;
@@ -25,7 +24,7 @@ export class BlockGraph {
       }
       for (let j = i + 1; j < blocks.length; j++) {
         const b2 = blocks[j];
-        if (adjacent(b1, b2)) {
+        if (b1.isAdjacentTo(b2)) {
           graph[b1.id].add(b2.id);
           graph[b2.id].add(b1.id);
         }
@@ -57,21 +56,3 @@ export class BlockGraph {
     return visited.size === Object.keys(this.graph).length;
   }
 }
-
-export const adjacent = (b1: Block, b2: Block) => {
-  for (const b1Coord of b1.coordinates) {
-    if (
-      find(
-        b2.coordinates,
-        (b2Coord) =>
-          isEqual(b2Coord, { x: b1Coord.x - 1, y: b1Coord.y }) ||
-          isEqual(b2Coord, { x: b1Coord.x + 1, y: b1Coord.y }) ||
-          isEqual(b2Coord, { x: b1Coord.x, y: b1Coord.y - 1 }) ||
-          isEqual(b2Coord, { x: b1Coord.x, y: b1Coord.y + 1 })
-      )
-    )
-      return true;
-  }
-
-  return false;
-};
