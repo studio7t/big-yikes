@@ -9,7 +9,7 @@ import {
   drawBlock,
   drawGrid,
   flipCanvas,
-  mouseToGridCoords,
+  snapMouseToGridCoords,
   Transforms,
 } from '../utils/canvas-utils';
 import { clamp } from '../utils/math-utils';
@@ -23,6 +23,7 @@ export const Canvas = () => {
     removeBlock: state.removeBlockIfValid,
   }));
 
+  const [panning, setPanning] = useState(false);
   const [hoveringBlock, setHoveringBlock] = useState<Block | null>(null);
   const [blockType, setBlockType] = useState<BlockTypeSlug>('1x1');
   const [transforms, setTransforms] = useState<Transforms>({
@@ -76,8 +77,13 @@ export const Canvas = () => {
     }
   };
 
+  const handleMouseReleased = (p5: p5Types) => {
+    if (panning) setPanning(false);
+    else removeOrPlaceBlock(p5);
+  };
+
   const removeOrPlaceBlock = (p5: p5Types) => {
-    const mouseCoords = mouseToGridCoords(p5, transforms.scale);
+    const mouseCoords = snapMouseToGridCoords(p5, transforms);
 
     for (let i = 0; i < structure.blocks.length; i++) {
       const block = structure.blocks[i];
@@ -89,7 +95,7 @@ export const Canvas = () => {
       }
     }
 
-    addBlock(new Block(blockType, mouseToGridCoords(p5, transforms.scale)));
+    addBlock(new Block(blockType, mouseCoords));
   };
 
   const changeActiveBlockType = (p5: p5Types) => {
@@ -110,18 +116,36 @@ export const Canvas = () => {
 
   const updateHoveringBlock = (p5: p5Types) => {
     setHoveringBlock(
-      new Block(blockType, mouseToGridCoords(p5, transforms.scale))
+      new Block(blockType, snapMouseToGridCoords(p5, transforms))
     );
+  };
+
+  const pan = (p5: p5Types) => {
+    if (!panning) setPanning(true);
+
+    const deltaX = p5.mouseX - p5.pmouseX;
+    const deltaY = p5.mouseY - p5.pmouseY;
+    const prevTranslate = transforms.translate;
+
+    const newTranslate = {
+      x: prevTranslate.x + deltaX,
+      y: prevTranslate.y + deltaY,
+    };
+    setTransforms({
+      ...transforms,
+      translate: newTranslate,
+    });
   };
 
   return (
     <Sketch
       setup={setup}
       draw={draw}
-      mouseClicked={removeOrPlaceBlock}
+      mouseReleased={handleMouseReleased}
       keyPressed={changeActiveBlockType}
       mouseWheel={zoom}
       mouseMoved={updateHoveringBlock}
+      mouseDragged={pan}
     />
   );
 };

@@ -25,6 +25,8 @@ export class Block {
     return !this.isUnderground() && !this.isOverlapping(others);
   }
 
+  // isValidAndConnected(others: Block[])
+
   isOverlapping(others: Block[]) {
     for (const other of others) {
       if (intersectionWith(this.coordinates, other.coordinates, isEqual).length)

@@ -6,13 +6,22 @@ export interface Transforms {
   translate: Vector2D;
 }
 
-export const mouseToGridCoords = (p5: p5Types, scale: number) => {
+export const mouseToGridCoords = (
+  p5: p5Types,
+  { scale, translate }: Transforms
+) => {
   const { mouseX, mouseY } = p5;
 
-  const x = Math.floor(mouseX / scale);
-  const y = Math.floor((p5.height - mouseY) / scale);
+  const x = (mouseX - translate.x) / scale;
+  const y = (p5.height - (mouseY - translate.y)) / scale;
 
   return { x, y };
+};
+
+export const snapMouseToGridCoords = (p5: p5Types, transforms: Transforms) => {
+  const { x, y } = mouseToGridCoords(p5, transforms);
+
+  return { x: Math.floor(x), y: Math.floor(y) };
 };
 
 export const drawBlock = (p5: p5Types, block: Block) => {
@@ -26,8 +35,8 @@ export const applyTransforms = (
   p5: p5Types,
   { scale, translate }: Transforms
 ) => {
+  p5.translate(translate.x, translate.y);
   p5.scale(scale);
-  p5.translate(-translate.x, -translate.y);
 };
 
 export const flipCanvas = (p5: p5Types, scale: number) => {
