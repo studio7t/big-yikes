@@ -1,5 +1,5 @@
 import { useAuth0 } from '@auth0/auth0-react';
-import { Block, BlockTypeSlug } from '@big-yikes/lib';
+import { Block, BlockTypeSlug, Structure } from '@big-yikes/lib';
 import p5Types from 'p5';
 import { useEffect, useState } from 'react';
 import Sketch from 'react-p5';
@@ -23,6 +23,7 @@ export const Canvas = () => {
     removeBlock: state.removeBlockIfValid,
   }));
 
+  const [hoveringBlock, setHoveringBlock] = useState<Block | null>(null);
   const [blockType, setBlockType] = useState<BlockTypeSlug>('1x1');
   const [transforms, setTransforms] = useState<Transforms>({
     scale: 100,
@@ -65,6 +66,14 @@ export const Canvas = () => {
     for (const block of structure.blocks) {
       drawBlock(p5, block);
     }
+
+    if (hoveringBlock) {
+      const resultingStructure = new Structure([
+        ...structure.blocks,
+        hoveringBlock,
+      ]);
+      if (resultingStructure.isValid()) drawBlock(p5, hoveringBlock);
+    }
   };
 
   const removeOrPlaceBlock = (p5: p5Types) => {
@@ -99,6 +108,12 @@ export const Canvas = () => {
     }
   };
 
+  const updateHoveringBlock = (p5: p5Types) => {
+    setHoveringBlock(
+      new Block(blockType, mouseToGridCoords(p5, transforms.scale))
+    );
+  };
+
   return (
     <Sketch
       setup={setup}
@@ -106,6 +121,7 @@ export const Canvas = () => {
       mouseClicked={removeOrPlaceBlock}
       keyPressed={changeActiveBlockType}
       mouseWheel={zoom}
+      mouseMoved={updateHoveringBlock}
     />
   );
 };
