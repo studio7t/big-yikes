@@ -10,6 +10,7 @@
     "test": "vitest"
   },
   "dependencies": {
+    "@auth0/auth0-react": "^1.10.2",
     "@big-yikes/lib": "link:../lib",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",

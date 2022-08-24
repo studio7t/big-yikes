@@ -1,12 +1,12 @@
-import { FastifyInstance } from 'fastify';
-import { db } from '../../db';
-import { Static, Type } from '@sinclair/typebox';
 import {
   Block,
   BlockTypeSlugSchema,
   Structure,
   Vector2DSchema,
 } from '@big-yikes/lib';
+import { Static, Type } from '@sinclair/typebox';
+import { FastifyInstance } from 'fastify';
+import { db } from '../../db';
 
 const BASE_PATH = '/discovery';
 
@@ -24,7 +24,10 @@ type StructureType = Static<typeof StructureSchema>;
 export const discoveryRoutes = async (fastify: FastifyInstance) => {
   fastify.post<{ Body: StructureType }>(
     BASE_PATH,
-    { schema: { body: StructureSchema } },
+    {
+      schema: { body: StructureSchema },
+      preValidation: [fastify.authenticate],
+    },
     async (request, reply) => {
       const collection = db.collection('discoveries');
 
@@ -42,21 +45,19 @@ export const discoveryRoutes = async (fastify: FastifyInstance) => {
 
       const structureId = await insertStructureIfNotExists(structure);
 
-      // TODO replace user ids with actual value
+      const { sub: userId } = request.user as { sub: string };
+
       const alreadyDiscovered = await collection.findOne({
         structure_id: structureId,
-        user_id: 1,
+        user_id: userId,
       });
-      if (alreadyDiscovered) {
-        reply.status(400).send('Already discovered');
-        return;
+      if (!alreadyDiscovered) {
+        await collection.insertOne({
+          structure_id: structureId,
+          time: Date.now(),
+          user_id: userId,
+        });
       }
-
-      await collection.insertOne({
-        structure_id: structureId,
-        time: Date.now(),
-        user_id: 1,
-      });
 
       const allDiscoveries = await collection
         .find({ structure_id: structureId })
