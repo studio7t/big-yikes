@@ -44,19 +44,3 @@ export const flipCanvas = (p5: p5Types, scale: number) => {
   p5.scale(1, -1);
   p5.translate(0, -p5.height / scale / 2);
 };
-
-export const drawGrid = (p5: p5Types, scale: number) => {
-  const rows = p5.height / scale;
-  const cols = p5.width / scale;
-
-  p5.stroke(0);
-  p5.strokeWeight(1 / scale);
-
-  for (let row = 0; row < rows; row++) {
-    p5.line(0, row, cols, row);
-  }
-
-  for (let col = 0; col < cols; col++) {
-    p5.line(col, 0, col, rows);
-  }
-};

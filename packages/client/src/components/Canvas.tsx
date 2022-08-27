@@ -7,11 +7,11 @@ import { useProjectStore } from '../stores/project.store';
 import {
   applyTransforms,
   drawBlock,
-  drawGrid,
   flipCanvas,
   snapMouseToGridCoords,
   Transforms,
 } from '../utils/canvas-utils';
+import { drawGrid } from '../utils/draw-grid';
 import { clamp } from '../utils/math-utils';
 
 export const Canvas = () => {
@@ -62,7 +62,7 @@ export const Canvas = () => {
     flipCanvas(p5, transforms.scale);
 
     p5.background(255);
-    drawGrid(p5, transforms.scale);
+    drawGrid(p5, transforms);
 
     for (const block of structure.blocks) {
       drawBlock(p5, block);
@@ -106,7 +106,7 @@ export const Canvas = () => {
 
   const zoom = (p5: p5Types, event?: WheelEvent) => {
     if (event) {
-      const scale = clamp(transforms.scale + event.deltaY, 50, 400);
+      const scale = clamp(transforms.scale - event.deltaY, 50, 400);
       setTransforms({
         ...transforms,
         scale,
@@ -129,7 +129,7 @@ export const Canvas = () => {
 
     const newTranslate = {
       x: prevTranslate.x + deltaX,
-      y: prevTranslate.y + deltaY,
+      y: Math.max(0, prevTranslate.y + deltaY),
     };
     setTransforms({
       ...transforms,
