@@ -59,13 +59,15 @@ export const Canvas = () => {
   };
 
   const draw = (p5: p5Types) => {
+    p5.background(240);
+
     applyTransforms(p5, transforms);
     flipCanvas(p5, transforms.scale);
 
-    p5.background(255);
+    p5.strokeWeight(1 / transforms.scale);
+
     drawGrid(p5, transforms);
 
-    p5.strokeWeight(1 / transforms.scale);
     for (const block of structure.blocks) {
       drawBlock(p5, block);
     }
