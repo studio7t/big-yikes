@@ -8,6 +8,7 @@ import {
   applyTransforms,
   drawBlock,
   flipCanvas,
+  mouseToGridCoords,
   snapMouseToGridCoords,
   Transforms,
 } from '../utils/canvas-utils';
@@ -64,6 +65,7 @@ export const Canvas = () => {
     p5.background(255);
     drawGrid(p5, transforms);
 
+    p5.strokeWeight(1 / transforms.scale);
     for (const block of structure.blocks) {
       drawBlock(p5, block);
     }
@@ -106,10 +108,16 @@ export const Canvas = () => {
 
   const zoom = (p5: p5Types, event?: WheelEvent) => {
     if (event) {
-      const scale = clamp(transforms.scale - event.deltaY, 50, 400);
+      const newScale = clamp(transforms.scale - event.deltaY, 50, 400);
+
+      const { x: gridX, y: gridY } = mouseToGridCoords(p5, transforms);
+
+      // grid coords of mouse location are preserved before and after zoom
+      const newTranslateX = p5.mouseX - newScale * gridX;
+      const newTranslateY = p5.mouseY - (p5.height - newScale * gridY);
       setTransforms({
-        ...transforms,
-        scale,
+        translate: { x: newTranslateX, y: Math.max(0, newTranslateY) },
+        scale: newScale,
       });
     }
   };
