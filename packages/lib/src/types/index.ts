@@ -6,3 +6,10 @@ export const Vector2DSchema = Type.Object({
 });
 
 export type Vector2D = Static<typeof Vector2DSchema>;
+
+export interface Bounds {
+  minX: number;
+  minY: number;
+  maxX: number;
+  maxY: number;
+}

@@ -1,7 +1,11 @@
 import { find, intersectionWith, isEqual } from 'lodash';
 import { nanoid } from 'nanoid';
 import { blockTypes, BlockTypeSlug } from '../block-types';
-import { Vector2D } from '../types';
+import { Bounds, Vector2D } from '../types';
+
+export interface BlockBounds extends Bounds {
+  block: Block;
+}
 
 export class Block {
   id: string;
@@ -21,14 +25,42 @@ export class Block {
     }));
   }
 
+  get bounds(): BlockBounds {
+    const firstCoord = this.coordinates[0];
+    const bounds = this.coordinates.reduce(
+      (acc, curr) => {
+        acc.minX = Math.min(acc.minX, curr.x);
+        acc.minY = Math.min(acc.minY, curr.y);
+        acc.maxX = Math.max(acc.maxX, curr.x);
+        acc.maxY = Math.max(acc.maxY, curr.y);
+
+        return acc;
+      },
+      {
+        minX: firstCoord.x,
+        minY: firstCoord.y,
+        maxX: firstCoord.x,
+        maxY: firstCoord.y,
+      }
+    );
+    return { ...bounds, block: this };
+  }
+
   isValid(others: Block[]) {
     return !this.isUnderground() && !this.isOverlapping(others);
   }
 
-  // isValidAndConnected(others: Block[])
+  isValidAndConnected(others: Block[]) {
+    return (
+      this.isValid(others) &&
+      (this.isOnTheGround() || this.isAdjacentToAnother(others))
+    );
+  }
 
   isOverlapping(others: Block[]) {
     for (const other of others) {
+      if (this === other) continue;
+
       if (intersectionWith(this.coordinates, other.coordinates, isEqual).length)
         return true;
     }

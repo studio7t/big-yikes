@@ -1,17 +1,22 @@
 import { isEqual } from 'lodash';
 import objectHash from 'object-hash';
-import { Vector2D } from '../types';
+import RBush from 'rbush';
+import { Bounds, Vector2D } from '../types';
+import { Block, BlockBounds } from './block';
 import { BlockGraph } from './block-graph';
-import { Block } from './block';
 
 export type BlockFingerprint = { type: string; position: Vector2D };
 export type BlockFingerprintSet = Set<BlockFingerprint>;
 
 export class Structure {
   blocks: Block[];
+  tree: RBush<BlockBounds>;
 
-  constructor(blocks: Block[]) {
+  constructor(blocks: Block[] = []) {
     this.blocks = blocks;
+
+    this.tree = new RBush();
+    this.tree.load(blocks.map((b) => b.bounds));
   }
 
   get hash() {
@@ -26,14 +31,24 @@ export class Structure {
     );
   }
 
+  getBlocksInBounds(bounds: Bounds) {
+    return this.tree.search(bounds).map((blockBounds) => blockBounds.block);
+  }
+
+  getBlockAtCoords({ x, y }: Vector2D): Block | undefined {
+    return this.getBlocksInBounds({ minX: x, minY: y, maxX: x, maxY: y })[0];
+  }
+
+  getBlocksWithout(block: Block) {
+    return this.blocks.filter((b) => b !== block);
+  }
+
   isValid() {
     for (let i = 0; i < this.blocks.length; i++) {
       const block = this.blocks[i];
 
-      const isValid = block.isValid([
-        ...this.blocks.slice(0, i),
-        ...this.blocks.slice(i + 1),
-      ]);
+      const nearbyBlocks = this.getBlocksInBounds(block.bounds);
+      const isValid = block.isValid(nearbyBlocks);
 
       if (!isValid) return false;
     }

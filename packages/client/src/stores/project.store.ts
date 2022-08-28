@@ -1,11 +1,11 @@
-import { Bin, Structure, Block, defaultBin } from '@big-yikes/lib';
+import { Bin, Block, defaultBin, growBounds, Structure } from '@big-yikes/lib';
 import create from 'zustand';
 
 interface ProjectState {
   bin: Bin;
   structure: Structure;
   addBlockIfValid: (block: Block) => boolean;
-  removeBlockIfValid: (indexInStructure: number) => boolean;
+  removeBlockIfValid: (block: Block) => boolean;
 }
 
 export const useProjectStore = create<ProjectState>((set, get) => ({
@@ -17,33 +17,32 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
       return false;
     }
 
-    const resultingStructure = new Structure([
-      ...get().structure.blocks,
-      block,
-    ]);
+    const nearbyBlocks = get().structure.getBlocksInBounds(
+      growBounds(block.bounds)
+    );
+    if (block.isValidAndConnected(nearbyBlocks)) {
+      const resultingStructure = new Structure([
+        ...get().structure.blocks,
+        block,
+      ]);
 
-    if (resultingStructure.isValid()) {
       set(() => ({
         structure: resultingStructure,
         bin: { ...bin, [block.type]: bin[block.type] - 1 },
       }));
+
       return true;
     }
 
     return false;
   },
-  removeBlockIfValid: (indexInStructure: number) => {
+  removeBlockIfValid: (block: Block) => {
     const bin = get().bin;
     const structure = get().structure;
 
-    const resultingStructure = new Structure([
-      ...structure.blocks.slice(0, indexInStructure),
-      ...structure.blocks.slice(indexInStructure + 1),
-    ]);
+    const resultingStructure = new Structure(structure.getBlocksWithout(block));
 
     if (resultingStructure.isValid()) {
-      const block = structure.blocks[indexInStructure];
-
       set(() => ({
         structure: resultingStructure,
         bin: { ...bin, [block.type]: bin[block.type] + 1 },

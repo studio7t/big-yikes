@@ -1,8 +1,8 @@
-import { useAuth0 } from '@auth0/auth0-react';
-import { Block, BlockTypeSlug, Structure } from '@big-yikes/lib';
+import { Block, BlockTypeSlug, growBounds } from '@big-yikes/lib';
 import p5Types from 'p5';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Sketch from 'react-p5';
+import { useSubmitDiscoveries } from '../hooks/submit-discoveries';
 import { useProjectStore } from '../stores/project.store';
 import {
   applyTransforms,
@@ -16,8 +16,6 @@ import { drawGrid } from '../utils/draw-grid';
 import { clamp } from '../utils/math-utils';
 
 export const Canvas = () => {
-  const { getAccessTokenSilently } = useAuth0();
-
   const { addBlock, removeBlock, structure } = useProjectStore((state) => ({
     structure: state.structure,
     addBlock: state.addBlockIfValid,
@@ -32,27 +30,7 @@ export const Canvas = () => {
     translate: { x: 0, y: 0 },
   });
 
-  useEffect(() => {
-    const submitDiscovery = async () => {
-      const accessToken = await getAccessTokenSilently({
-        audience: import.meta.env.VITE_AUTH0_AUDIENCE,
-      });
-
-      const res = await fetch(`${import.meta.env.VITE_API_HOST}/discovery`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessToken}`,
-        },
-        body: JSON.stringify({ blocks: structure.blocks }),
-      });
-
-      const discoveries = await res.json();
-      console.log(discoveries);
-    };
-
-    if (structure.isDiscovery()) submitDiscovery();
-  }, [structure]);
+  useSubmitDiscoveries();
 
   const setup = (p5: p5Types, canvasParentRef: Element) => {
     p5.createCanvas(800, 800).parent(canvasParentRef);
@@ -73,11 +51,12 @@ export const Canvas = () => {
     }
 
     if (hoveringBlock) {
-      const resultingStructure = new Structure([
-        ...structure.blocks,
-        hoveringBlock,
-      ]);
-      if (resultingStructure.isValid()) drawBlock(p5, hoveringBlock);
+      const nearbyBlocks = structure.getBlocksInBounds(
+        growBounds(hoveringBlock.bounds)
+      );
+
+      if (hoveringBlock.isValidAndConnected(nearbyBlocks))
+        drawBlock(p5, hoveringBlock);
     }
   };
 
@@ -88,15 +67,11 @@ export const Canvas = () => {
 
   const removeOrPlaceBlock = (p5: p5Types) => {
     const mouseCoords = snapMouseToGridCoords(p5, transforms);
+    const blockAtMouse = structure.getBlockAtCoords(mouseCoords);
 
-    for (let i = 0; i < structure.blocks.length; i++) {
-      const block = structure.blocks[i];
-      for (const coord of block.coordinates) {
-        if (coord.x === mouseCoords.x && coord.y === mouseCoords.y) {
-          removeBlock(i);
-          return;
-        }
-      }
+    if (blockAtMouse) {
+      removeBlock(blockAtMouse);
+      return;
     }
 
     addBlock(new Block(blockType, mouseCoords));
