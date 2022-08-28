@@ -2,18 +2,13 @@ import { Block, BlockTypeSlug, growBounds } from '@big-yikes/lib';
 import p5Types from 'p5';
 import { useState } from 'react';
 import Sketch from 'react-p5';
+import { drawBlock } from '../actions/draw-block';
+import { drawGrid } from '../actions/draw-grid';
+import { applyTransforms, flipCanvas, pan, zoom } from '../actions/transform';
 import { useSubmitDiscoveries } from '../hooks/submit-discoveries';
 import { useProjectStore } from '../stores/project.store';
-import {
-  applyTransforms,
-  drawBlock,
-  flipCanvas,
-  mouseToGridCoords,
-  snapMouseToGridCoords,
-  Transforms,
-} from '../utils/canvas-utils';
-import { drawGrid } from '../utils/draw-grid';
-import { clamp } from '../utils/math-utils';
+import { useTransformsState } from '../stores/transforms.store';
+import { snapMouseToGridCoords } from '../utils/mouse-to-grid';
 
 export const Canvas = () => {
   const { addBlock, removeBlock, structure } = useProjectStore((state) => ({
@@ -22,13 +17,13 @@ export const Canvas = () => {
     removeBlock: state.removeBlockIfValid,
   }));
 
-  const [panning, setPanning] = useState(false);
+  const { panning, setPanning } = useTransformsState((state) => ({
+    panning: state.panning,
+    setPanning: state.setPanning,
+  }));
+
   const [hoveringBlock, setHoveringBlock] = useState<Block | null>(null);
   const [blockType, setBlockType] = useState<BlockTypeSlug>('1x1');
-  const [transforms, setTransforms] = useState<Transforms>({
-    scale: 100,
-    translate: { x: 0, y: 0 },
-  });
 
   useSubmitDiscoveries();
 
@@ -39,12 +34,10 @@ export const Canvas = () => {
   const draw = (p5: p5Types) => {
     p5.background(240);
 
-    applyTransforms(p5, transforms);
-    flipCanvas(p5, transforms.scale);
+    applyTransforms(p5);
+    flipCanvas(p5);
 
-    p5.strokeWeight(1 / transforms.scale);
-
-    drawGrid(p5, transforms);
+    drawGrid(p5);
 
     for (const block of structure.blocks) {
       drawBlock(p5, block);
@@ -66,7 +59,7 @@ export const Canvas = () => {
   };
 
   const removeOrPlaceBlock = (p5: p5Types) => {
-    const mouseCoords = snapMouseToGridCoords(p5, transforms);
+    const mouseCoords = snapMouseToGridCoords(p5);
     const blockAtMouse = structure.getBlockAtCoords(mouseCoords);
 
     if (blockAtMouse) {
@@ -83,43 +76,8 @@ export const Canvas = () => {
     else if (key === '2') setBlockType('1x2');
   };
 
-  const zoom = (p5: p5Types, event?: WheelEvent) => {
-    if (event) {
-      const newScale = clamp(transforms.scale - event.deltaY, 50, 400);
-
-      const { x: gridX, y: gridY } = mouseToGridCoords(p5, transforms);
-
-      // grid coords of mouse location are preserved before and after zoom
-      const newTranslateX = p5.mouseX - newScale * gridX;
-      const newTranslateY = p5.mouseY - (p5.height - newScale * gridY);
-      setTransforms({
-        translate: { x: newTranslateX, y: Math.max(0, newTranslateY) },
-        scale: newScale,
-      });
-    }
-  };
-
   const updateHoveringBlock = (p5: p5Types) => {
-    setHoveringBlock(
-      new Block(blockType, snapMouseToGridCoords(p5, transforms))
-    );
-  };
-
-  const pan = (p5: p5Types) => {
-    if (!panning) setPanning(true);
-
-    const deltaX = p5.mouseX - p5.pmouseX;
-    const deltaY = p5.mouseY - p5.pmouseY;
-    const prevTranslate = transforms.translate;
-
-    const newTranslate = {
-      x: prevTranslate.x + deltaX,
-      y: Math.max(0, prevTranslate.y + deltaY),
-    };
-    setTransforms({
-      ...transforms,
-      translate: newTranslate,
-    });
+    setHoveringBlock(new Block(blockType, snapMouseToGridCoords(p5)));
   };
 
   return (
