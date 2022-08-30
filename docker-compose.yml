@@ -22,7 +22,4 @@ services:
     image: mongo:4.2
     restart: always
     volumes:
-      - mongo:/data/db
-
-volumes:
-  mongo:
+      - ${DB_MOUNT_PATH}:/data/db
