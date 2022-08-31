@@ -1,10 +1,10 @@
 import p5Types from 'p5';
 import { useTransformsState } from '../stores/transforms.store';
 import { clamp } from '../utils/math';
-import { mouseToGridCoords } from '../utils/mouse-to-grid';
+import { isMouseInCanvas, mouseToGridCoords } from '../utils/mouse-to-grid';
 
 export const pan = (p5: p5Types) => {
-  if (!mouseInCanvas(p5)) {
+  if (!isMouseInCanvas(p5)) {
     return;
   }
 
@@ -25,7 +25,7 @@ export const pan = (p5: p5Types) => {
 };
 
 export const zoom = (p5: p5Types, event?: WheelEvent) => {
-  if (!mouseInCanvas(p5)) {
+  if (!isMouseInCanvas(p5)) {
     return;
   }
 
@@ -58,13 +58,4 @@ export const flipCanvas = (p5: p5Types) => {
   p5.translate(0, p5.height / scale / 2);
   p5.scale(1, -1);
   p5.translate(0, -p5.height / scale / 2);
-};
-
-const mouseInCanvas = (p5: p5Types) => {
-  return (
-    p5.mouseX > 0 &&
-    p5.mouseX < p5.width &&
-    p5.mouseY > 0 &&
-    p5.mouseY < p5.height
-  );
 };

@@ -1,4 +1,4 @@
-import { Block, BlockTypeSlug, growBounds } from '@big-yikes/lib';
+import { Block, BlockTypeSlug, growBounds, isEqual } from '@big-yikes/lib';
 import p5Types from 'p5';
 import { useState } from 'react';
 import Sketch from 'react-p5';
@@ -7,7 +7,7 @@ import { drawGrid } from '../actions/draw-grid';
 import { applyTransforms, flipCanvas, pan, zoom } from '../actions/transform';
 import { useProjectStore } from '../stores/project.store';
 import { useTransformsState } from '../stores/transforms.store';
-import { snapMouseToGridCoords } from '../utils/mouse-to-grid';
+import { isMouseInCanvas, snapMouseToGridCoords } from '../utils/mouse-to-grid';
 
 export const Canvas = () => {
   const { addBlock, removeBlock, structure } = useProjectStore((state) => ({
@@ -41,12 +41,7 @@ export const Canvas = () => {
     }
 
     if (hoveringBlock) {
-      const nearbyBlocks = structure.getBlocksInBounds(
-        growBounds(hoveringBlock.bounds)
-      );
-
-      if (hoveringBlock.isValidAndConnected(nearbyBlocks))
-        drawBlock(p5, hoveringBlock);
+      drawBlock(p5, hoveringBlock);
     }
   };
 
@@ -74,7 +69,29 @@ export const Canvas = () => {
   };
 
   const updateHoveringBlock = (p5: p5Types) => {
-    setHoveringBlock(new Block(blockType, snapMouseToGridCoords(p5)));
+    const mouseInCanvas = isMouseInCanvas(p5);
+    if (!mouseInCanvas) {
+      if (hoveringBlock) setHoveringBlock(null);
+      return;
+    }
+
+    const snappedMousePos = snapMouseToGridCoords(p5);
+    if (
+      hoveringBlock === null ||
+      !isEqual(hoveringBlock.position, snappedMousePos)
+    ) {
+      const potentialBlock = new Block(blockType, snappedMousePos);
+      const nearbyBlocks = structure.getBlocksInBounds(
+        growBounds(potentialBlock.bounds)
+      );
+
+      if (potentialBlock.isValidAndConnected(nearbyBlocks)) {
+        setHoveringBlock(new Block(blockType, snappedMousePos));
+        // play sound here
+      } else {
+        setHoveringBlock(null);
+      }
+    }
   };
 
   return (
