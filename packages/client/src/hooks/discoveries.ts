@@ -1,10 +1,13 @@
 import { useAuth0 } from '@auth0/auth0-react';
-import { useEffect } from 'react';
+import { Discovery } from '@big-yikes/lib';
+import { useEffect, useState } from 'react';
 import { useProjectStore } from '../stores/project.store';
 
-export const useSubmitDiscoveries = () => {
+export const useDiscoveries = () => {
   const structure = useProjectStore((state) => state.structure);
-  const { getAccessTokenSilently } = useAuth0();
+  const { getAccessTokenSilently, isAuthenticated } = useAuth0();
+  const [discoveries, setDiscoveries] = useState<Discovery[]>([]);
+  const [isDiscovery, setIsDiscovery] = useState(false);
 
   useEffect(() => {
     const submitDiscovery = async () => {
@@ -22,9 +25,18 @@ export const useSubmitDiscoveries = () => {
       });
 
       const discoveries = await res.json();
-      console.log(discoveries);
+      setDiscoveries(discoveries);
     };
 
-    if (structure.isDiscovery()) submitDiscovery();
+    setDiscoveries([]);
+
+    if (structure.isDiscovery()) {
+      setIsDiscovery(true);
+      if (isAuthenticated) submitDiscovery();
+    } else {
+      setIsDiscovery(false);
+    }
   }, [structure]);
+
+  return { isAuthenticated, discoveries, isDiscovery };
 };

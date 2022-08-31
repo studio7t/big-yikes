@@ -5,7 +5,6 @@ import Sketch from 'react-p5';
 import { drawBlock } from '../actions/draw-block';
 import { drawGrid } from '../actions/draw-grid';
 import { applyTransforms, flipCanvas, pan, zoom } from '../actions/transform';
-import { useSubmitDiscoveries } from '../hooks/submit-discoveries';
 import { useProjectStore } from '../stores/project.store';
 import { useTransformsState } from '../stores/transforms.store';
 import { snapMouseToGridCoords } from '../utils/mouse-to-grid';
@@ -24,8 +23,6 @@ export const Canvas = () => {
 
   const [hoveringBlock, setHoveringBlock] = useState<Block | null>(null);
   const [blockType, setBlockType] = useState<BlockTypeSlug>('1x1');
-
-  useSubmitDiscoveries();
 
   const setup = (p5: p5Types, canvasParentRef: Element) => {
     p5.createCanvas(800, 800).parent(canvasParentRef);

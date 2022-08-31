@@ -1,6 +1,7 @@
 import {
   Block,
   BlockTypeSlugSchema,
+  Discovery,
   Structure,
   Vector2DSchema,
 } from '@big-yikes/lib';
@@ -45,24 +46,31 @@ export const discoveryRoutes = async (fastify: FastifyInstance) => {
 
       const structureId = await insertStructureIfNotExists(structure);
 
-      const { sub: userId } = request.user as { sub: string };
+      const { username } = request.user as { username: string };
 
       const alreadyDiscovered = await collection.findOne({
         structure_id: structureId,
-        user_id: userId,
+        username,
       });
       if (!alreadyDiscovered) {
         await collection.insertOne({
           structure_id: structureId,
           time: Date.now(),
-          user_id: userId,
+          username,
         });
       }
 
       const allDiscoveries = await collection
         .find({ structure_id: structureId })
         .toArray();
-      reply.status(200).send(allDiscoveries);
+      const formattedDiscoveries: Discovery[] = allDiscoveries
+        .map((discovery) => ({
+          structureId: discovery.structure_id,
+          time: discovery.time,
+          username: discovery.username,
+        }))
+        .sort((a, b) => a.time - b.time);
+      reply.status(200).send(formattedDiscoveries);
     }
   );
 };
