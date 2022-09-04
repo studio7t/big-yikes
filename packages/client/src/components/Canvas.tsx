@@ -3,7 +3,7 @@ import p5Types from 'p5';
 import Sketch from 'react-p5';
 import { drawBlock } from '../actions/draw-block';
 import { drawGrid } from '../actions/draw-grid';
-import { applyTransforms, flipCanvas, pan, zoom } from '../actions/transform';
+import { applyTransforms, flipCanvas } from '../actions/transform';
 import { useProjectStore } from '../stores/project.store';
 import { useTentativeState } from '../stores/tentative.store';
 import { useTransformsState } from '../stores/transforms.store';
@@ -16,7 +16,9 @@ export const Canvas = () => {
     removeBlock: state.removeBlockIfValid,
   }));
 
-  const { panning, setPanning } = useTransformsState((state) => ({
+  const { pan, zoom, panning, setPanning } = useTransformsState((state) => ({
+    pan: state.pan,
+    zoom: state.zoom,
     panning: state.panning,
     setPanning: state.setPanning,
   }));
