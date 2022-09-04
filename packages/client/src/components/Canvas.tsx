@@ -1,13 +1,13 @@
-import { Block, BlockTypeSlug, growBounds, isEqual } from '@big-yikes/lib';
+import { Block } from '@big-yikes/lib';
 import p5Types from 'p5';
-import { useState } from 'react';
 import Sketch from 'react-p5';
 import { drawBlock } from '../actions/draw-block';
 import { drawGrid } from '../actions/draw-grid';
 import { applyTransforms, flipCanvas, pan, zoom } from '../actions/transform';
 import { useProjectStore } from '../stores/project.store';
+import { useTentativeState } from '../stores/tentative.store';
 import { useTransformsState } from '../stores/transforms.store';
-import { isMouseInCanvas, snapMouseToGridCoords } from '../utils/mouse-to-grid';
+import { snapMouseToGridCoords } from '../utils/mouse-to-grid';
 
 export const Canvas = () => {
   const { addBlock, removeBlock, structure } = useProjectStore((state) => ({
@@ -21,8 +21,13 @@ export const Canvas = () => {
     setPanning: state.setPanning,
   }));
 
-  const [hoveringBlock, setHoveringBlock] = useState<Block | null>(null);
-  const [blockType, setBlockType] = useState<BlockTypeSlug>('1x1');
+  const { hoveringBlock, updateHoveringBlock, blockType, setBlockType } =
+    useTentativeState((state) => ({
+      hoveringBlock: state.hoveringBlock,
+      updateHoveringBlock: state.updateHoveringBlock,
+      blockType: state.blockType,
+      setBlockType: state.setBlockType,
+    }));
 
   const setup = (p5: p5Types, canvasParentRef: Element) => {
     p5.createCanvas(800, 800).parent(canvasParentRef);
@@ -66,32 +71,8 @@ export const Canvas = () => {
     const { key } = p5;
     if (key === '1') setBlockType('1x1');
     else if (key === '2') setBlockType('1x2');
-  };
 
-  const updateHoveringBlock = (p5: p5Types) => {
-    const mouseInCanvas = isMouseInCanvas(p5);
-    if (!mouseInCanvas) {
-      if (hoveringBlock) setHoveringBlock(null);
-      return;
-    }
-
-    const snappedMousePos = snapMouseToGridCoords(p5);
-    if (
-      hoveringBlock === null ||
-      !isEqual(hoveringBlock.position, snappedMousePos)
-    ) {
-      const potentialBlock = new Block(blockType, snappedMousePos);
-      const nearbyBlocks = structure.getBlocksInBounds(
-        growBounds(potentialBlock.bounds)
-      );
-
-      if (potentialBlock.isValidAndConnected(nearbyBlocks)) {
-        setHoveringBlock(new Block(blockType, snappedMousePos));
-        // play sound here
-      } else {
-        setHoveringBlock(null);
-      }
-    }
+    updateHoveringBlock(p5);
   };
 
   return (
