@@ -44,7 +44,7 @@ export const useTransformsState = create<TransformsState>((set, get) => ({
     const { scale } = get();
 
     if (event) {
-      const newScale = clamp(scale - event.deltaY, 50, 400);
+      const newScale = clamp(scale - event.deltaY / 5, 50, 200);
 
       const { x: gridX, y: gridY } = mouseToGridCoords(p5);
 

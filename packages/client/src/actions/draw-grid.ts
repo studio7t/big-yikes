@@ -33,11 +33,14 @@ export const drawGrid = (p5: p5Types) => {
   p5.stroke(0);
   p5.strokeWeight(1 / scale);
 
-  for (let row = -2 * rows; row < 3 * rows; row++) {
-    p5.line(-cols + xOffset, row + yOffset, 2 * cols + xOffset, row + yOffset);
+  const [minX, maxX] = [-2 * cols, 3 * cols];
+  const [minY, maxY] = [-2 * rows, 3 * rows];
+
+  for (let row = minY; row < maxY; row++) {
+    p5.line(minX + xOffset, row + yOffset, maxX + xOffset, row + yOffset);
   }
 
-  for (let col = -2 * cols; col < 3 * cols; col++) {
-    p5.line(col + xOffset, -rows + yOffset, col + xOffset, 2 * rows + yOffset);
+  for (let col = minX; col < maxX; col++) {
+    p5.line(col + xOffset, minY + yOffset, col + xOffset, maxY + yOffset);
   }
 };
