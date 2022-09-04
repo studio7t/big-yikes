@@ -26,10 +26,10 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
         block,
       ]);
 
-      set(() => ({
+      set({
         structure: resultingStructure,
         bin: { ...bin, [block.type]: bin[block.type] - 1 },
-      }));
+      });
 
       return true;
     }
@@ -43,10 +43,10 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
     const resultingStructure = new Structure(structure.getBlocksWithout(block));
 
     if (resultingStructure.isValid()) {
-      set(() => ({
+      set({
         structure: resultingStructure,
         bin: { ...bin, [block.type]: bin[block.type] + 1 },
-      }));
+      });
 
       return true;
     }

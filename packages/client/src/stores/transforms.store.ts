@@ -58,5 +58,5 @@ export const useTransformsState = create<TransformsState>((set, get) => ({
       });
     }
   },
-  setPanning: (val) => set(() => ({ panning: val })),
+  setPanning: (val) => set({ panning: val }),
 }));
