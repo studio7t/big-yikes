@@ -1,4 +1,4 @@
-import { isEqual } from 'lodash';
+import isEqual from 'lodash.isequal';
 import objectHash from 'object-hash';
 import RBush from 'rbush';
 import { Bounds, Vector2D } from '../types';

@@ -1,4 +1,5 @@
-import { find, intersectionWith, isEqual } from 'lodash';
+import intersectionWith from 'lodash.intersectionwith';
+import isEqual from 'lodash.isequal';
 import { nanoid } from 'nanoid';
 import { blockTypes, BlockTypeSlug } from '../block-types';
 import { Bounds, Vector2D } from '../types';
@@ -71,8 +72,7 @@ export class Block {
   isAdjacentTo(other: Block) {
     for (const b1Coord of this.coordinates) {
       if (
-        find(
-          other.coordinates,
+        other.coordinates.find(
           (b2Coord) =>
             isEqual(b2Coord, { x: b1Coord.x - 1, y: b1Coord.y }) ||
             isEqual(b2Coord, { x: b1Coord.x + 1, y: b1Coord.y }) ||
