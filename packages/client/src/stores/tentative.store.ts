@@ -1,6 +1,7 @@
-import { Block, BlockTypeSlug, growBounds, isEqual } from '@big-yikes/lib';
+import { Block, BlockTypeSlug, growBounds } from '@big-yikes/lib';
 import p5Types from 'p5';
 import create from 'zustand';
+import tickUrl from '../assets/tick.mp3';
 import { isMouseInCanvas, snapMouseToGridCoords } from '../utils/mouse-to-grid';
 import { useProjectStore } from './project.store';
 
@@ -24,23 +25,17 @@ export const useTentativeState = create<TentativeState>((set, get) => ({
     }
 
     const snappedMousePos = snapMouseToGridCoords(p5);
-    if (
-      hoveringBlock === null ||
-      hoveringBlock.type !== blockType ||
-      !isEqual(hoveringBlock.position, snappedMousePos)
-    ) {
-      const potentialBlock = new Block(blockType, snappedMousePos);
-      const structure = useProjectStore.getState().structure;
-      const nearbyBlocks = structure.getBlocksInBounds(
-        growBounds(potentialBlock.bounds)
-      );
+    const potentialBlock = new Block(blockType, snappedMousePos);
+    const structure = useProjectStore.getState().structure;
+    const nearbyBlocks = structure.getBlocksInBounds(
+      growBounds(potentialBlock.bounds)
+    );
 
-      if (potentialBlock.isValidAndConnected(nearbyBlocks)) {
-        set({ hoveringBlock: new Block(blockType, snappedMousePos) });
-        // play sound here
-      } else {
-        set({ hoveringBlock: null });
-      }
+    if (potentialBlock.isValidAndConnected(nearbyBlocks)) {
+      set({ hoveringBlock: potentialBlock });
+      new Audio(tickUrl).play();
+    } else {
+      set({ hoveringBlock: null });
     }
   },
   setBlockType: (blockType: BlockTypeSlug) => set({ blockType }),

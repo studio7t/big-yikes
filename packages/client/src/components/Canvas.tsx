@@ -1,4 +1,4 @@
-import { Block } from '@big-yikes/lib';
+import { isEqual } from '@big-yikes/lib';
 import p5Types from 'p5';
 import Sketch from 'react-p5';
 import { drawBlock } from '../actions/draw-block';
@@ -52,25 +52,24 @@ export const Canvas = () => {
     }
   };
 
-  const handleMouseReleased = (p5: p5Types) => {
-    if (panning) setPanning(false);
-    else removeOrPlaceBlock(p5);
-  };
-
-  const removeOrPlaceBlock = (p5: p5Types) => {
-    const mouseCoords = snapMouseToGridCoords(p5);
-    const blockAtMouse = structure.getBlockAtCoords(mouseCoords);
-
-    if (blockAtMouse) {
-      removeBlock(blockAtMouse);
+  const onMouseReleased = (p5: p5Types) => {
+    if (panning) {
+      setPanning(false);
     } else {
-      addBlock(new Block(blockType, mouseCoords));
-    }
+      const mouseCoords = snapMouseToGridCoords(p5);
+      const blockAtMouse = structure.getBlockAtCoords(mouseCoords);
 
-    updateHoveringBlock(p5);
+      if (blockAtMouse) {
+        removeBlock(blockAtMouse);
+      } else if (hoveringBlock) {
+        addBlock(hoveringBlock);
+      }
+
+      updateHoveringBlock(p5);
+    }
   };
 
-  const changeActiveBlockType = (p5: p5Types) => {
+  const onKeyPressed = (p5: p5Types) => {
     const { key } = p5;
     if (key === '1') setBlockType('1x1');
     else if (key === '2') setBlockType('1x2');
@@ -78,7 +77,19 @@ export const Canvas = () => {
     updateHoveringBlock(p5);
   };
 
-  const handleMouseDragged = (p5: p5Types) => {
+  const onMouseMoved = (p5: p5Types) => {
+    const snappedMousePos = snapMouseToGridCoords(p5);
+
+    if (
+      hoveringBlock === null ||
+      hoveringBlock.type !== blockType ||
+      !isEqual(hoveringBlock.position, snappedMousePos)
+    ) {
+      updateHoveringBlock(p5);
+    }
+  };
+
+  const onMouseDragged = (p5: p5Types) => {
     if (p5.key === ' ') pan(p5);
   };
 
@@ -86,11 +97,11 @@ export const Canvas = () => {
     <Sketch
       setup={setup}
       draw={draw}
-      mouseReleased={handleMouseReleased}
-      keyPressed={changeActiveBlockType}
+      mouseReleased={onMouseReleased}
+      keyPressed={onKeyPressed}
       mouseWheel={zoom}
-      mouseMoved={updateHoveringBlock}
-      mouseDragged={handleMouseDragged}
+      mouseMoved={onMouseMoved}
+      mouseDragged={onMouseDragged}
     />
   );
 };

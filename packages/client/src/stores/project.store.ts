@@ -1,5 +1,6 @@
 import { Bin, Block, defaultBin, growBounds, Structure } from '@big-yikes/lib';
 import create from 'zustand';
+import snapUrl from '../assets/snap.mp3';
 
 interface ProjectState {
   bin: Bin;
@@ -30,6 +31,8 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
         structure: resultingStructure,
         bin: { ...bin, [block.type]: bin[block.type] - 1 },
       });
+
+      new Audio(snapUrl).play();
 
       return true;
     }
