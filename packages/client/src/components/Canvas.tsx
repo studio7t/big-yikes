@@ -63,10 +63,11 @@ export const Canvas = () => {
 
     if (blockAtMouse) {
       removeBlock(blockAtMouse);
-      return;
+    } else {
+      addBlock(new Block(blockType, mouseCoords));
     }
 
-    addBlock(new Block(blockType, mouseCoords));
+    updateHoveringBlock(p5);
   };
 
   const changeActiveBlockType = (p5: p5Types) => {
