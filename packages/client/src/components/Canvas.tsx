@@ -78,6 +78,10 @@ export const Canvas = () => {
     updateHoveringBlock(p5);
   };
 
+  const handleMouseDragged = (p5: p5Types) => {
+    if (p5.key === ' ') pan(p5);
+  };
+
   return (
     <Sketch
       setup={setup}
@@ -86,7 +90,7 @@ export const Canvas = () => {
       keyPressed={changeActiveBlockType}
       mouseWheel={zoom}
       mouseMoved={updateHoveringBlock}
-      mouseDragged={pan}
+      mouseDragged={handleMouseDragged}
     />
   );
 };
