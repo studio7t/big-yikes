@@ -90,7 +90,7 @@ export const Canvas = () => {
   };
 
   const onMouseDragged = (p5: p5Types) => {
-    if (p5.key === ' ') pan(p5);
+    if (p5.keyIsPressed && p5.key === ' ') pan(p5);
   };
 
   return (
