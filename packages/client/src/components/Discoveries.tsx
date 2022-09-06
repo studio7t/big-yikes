@@ -1,4 +1,3 @@
-import { Discovery } from '@big-yikes/lib';
 import { useDiscoveries } from '../hooks/discoveries';
 
 export const Discoveries = () => {
@@ -8,22 +7,20 @@ export const Discoveries = () => {
     return (
       <div>
         <p>Congrats, you found a Big Yikes!</p>
-        {isAuthenticated ? <DiscoveriesList discoveries={discoveries} /> : null}
+        {isAuthenticated ? (
+          <ul>
+            {discoveries.map((discovery) => (
+              <li key={discovery.username}>
+                {discovery.username}: {new Date(discovery.time).toTimeString()}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p>Log in to see discoveries made by other users.</p>
+        )}
       </div>
     );
   }
 
   return null;
-};
-
-const DiscoveriesList = ({ discoveries }: { discoveries: Discovery[] }) => {
-  return (
-    <ul>
-      {discoveries.map((discovery) => (
-        <li key={discovery.username}>
-          {discovery.username}: {new Date(discovery.time).toTimeString()}
-        </li>
-      ))}
-    </ul>
-  );
 };
