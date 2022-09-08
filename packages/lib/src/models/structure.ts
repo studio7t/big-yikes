@@ -2,6 +2,7 @@ import isEqual from 'lodash.isequal';
 import objectHash from 'object-hash';
 import RBush from 'rbush';
 import { Bounds, Vector2D } from '../types';
+import { isEqual as vectorIsEqual } from '../utils';
 import { Block, BlockBounds } from './block';
 import { BlockGraph } from './block-graph';
 
@@ -36,7 +37,16 @@ export class Structure {
   }
 
   getBlockAtCoords({ x, y }: Vector2D): Block | undefined {
-    return this.getBlocksInBounds({ minX: x, minY: y, maxX: x, maxY: y })[0];
+    const blocksInBounds = this.getBlocksInBounds({
+      minX: x,
+      minY: y,
+      maxX: x,
+      maxY: y,
+    });
+    for (const block of blocksInBounds) {
+      if (block.coordinates.find((coord) => vectorIsEqual(coord, { x, y })))
+        return block;
+    }
   }
 
   getBlocksWithout(block: Block) {
