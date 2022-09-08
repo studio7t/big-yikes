@@ -48,7 +48,7 @@ export const Canvas = () => {
     }
 
     if (hoveringBlock) {
-      drawBlock(p5, hoveringBlock);
+      drawBlock(p5, hoveringBlock, { tentative: true });
     }
   };
 
