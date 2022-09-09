@@ -1,4 +1,4 @@
-import { BinCounts } from './components/BinCounts';
+import { BlockSelector } from './components/BlockSelector';
 import { Canvas } from './components/Canvas';
 import { Discoveries } from './components/Discoveries';
 import { LoginButton } from './components/LoginButton';
@@ -9,8 +9,10 @@ const App = () => {
     <div>
       <LoginButton />
       <LogoutButton />
-      <Canvas />
-      <BinCounts />
+      <div className="flex">
+        <BlockSelector />
+        <Canvas />
+      </div>
       <Discoveries />
     </div>
   );

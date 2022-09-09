@@ -6,7 +6,7 @@ export interface BlockType {
   color: string;
 }
 
-const blockTypeSlugs = ['1x1', '1x2'] as const;
+export const blockTypeSlugs = ['1x1', '1x2'] as const;
 
 export const BlockTypeSlugSchema = Type.Union(
   blockTypeSlugs.map((slug) => Type.Literal(slug))
