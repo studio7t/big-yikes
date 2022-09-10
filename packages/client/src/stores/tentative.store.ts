@@ -12,7 +12,7 @@ interface TentativeState {
   setBlockType: (blockType: BlockTypeSlug) => void;
 }
 
-export const useTentativeState = create<TentativeState>((set, get) => ({
+export const useTentativeStore = create<TentativeState>((set, get) => ({
   hoveringBlock: null,
   blockType: '1x1',
   updateHoveringBlock: (p5: p5Types) => {

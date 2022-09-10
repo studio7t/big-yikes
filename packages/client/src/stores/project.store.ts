@@ -1,6 +1,7 @@
 import { Bin, Block, defaultBin, growBounds, Structure } from '@big-yikes/lib';
 import create from 'zustand';
 import snapUrl from '../assets/snap.mp3';
+import { useTentativeStore } from './tentative.store';
 
 interface ProjectState {
   bin: Bin;

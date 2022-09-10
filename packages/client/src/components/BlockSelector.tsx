@@ -5,12 +5,12 @@ import {
   blockTypeSlugs,
 } from '@big-yikes/lib';
 import { useProjectStore } from '../stores/project.store';
-import { useTentativeState } from '../stores/tentative.store';
+import { useTentativeStore } from '../stores/tentative.store';
 
 const BlockSelectorOption = ({ blockType }: { blockType: BlockTypeSlug }) => {
   const { bin } = useProjectStore((state) => ({ bin: state.bin }));
 
-  const { activeBlockType, setBlockType } = useTentativeState((state) => ({
+  const { activeBlockType, setBlockType } = useTentativeStore((state) => ({
     activeBlockType: state.blockType,
     setBlockType: state.setBlockType,
   }));

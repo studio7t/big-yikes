@@ -5,7 +5,7 @@ import { drawBlock } from '../actions/draw-block';
 import { drawGrid } from '../actions/draw-grid';
 import { applyTransforms, flipCanvas } from '../actions/transform';
 import { useProjectStore } from '../stores/project.store';
-import { useTentativeState } from '../stores/tentative.store';
+import { useTentativeStore } from '../stores/tentative.store';
 import { useTransformsState } from '../stores/transforms.store';
 import { snapMouseToGridCoords } from '../utils/mouse-to-grid';
 
@@ -24,7 +24,7 @@ export const Canvas = () => {
   }));
 
   const { hoveringBlock, updateHoveringBlock, blockType, setBlockType } =
-    useTentativeState((state) => ({
+    useTentativeStore((state) => ({
       hoveringBlock: state.hoveringBlock,
       updateHoveringBlock: state.updateHoveringBlock,
       blockType: state.blockType,
