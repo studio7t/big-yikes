@@ -7,7 +7,7 @@ const App = () => {
   return (
     <div className="p-2">
       <AuthButton />
-      <h2 className="text-5xl my-6">Find a big yikes!</h2>
+      <h2 className="text-5xl mt-3 mb-6">Find a big yikes!</h2>
       <div className="flex">
         <BlockSelector />
         <Canvas />
