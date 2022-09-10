@@ -32,7 +32,7 @@ export const Canvas = () => {
     }));
 
   const setup = (p5: p5Types, canvasParentRef: Element) => {
-    p5.createCanvas(800, 800).parent(canvasParentRef);
+    p5.createCanvas(720, 720).parent(canvasParentRef);
   };
 
   const draw = (p5: p5Types) => {

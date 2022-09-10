@@ -14,7 +14,7 @@ export interface TransformsState {
 }
 
 export const useTransformsState = create<TransformsState>((set, get) => ({
-  scale: 100,
+  scale: 90,
   translate: { x: 0, y: 0 },
   panning: false,
   pan: (p5: p5Types) => {
@@ -44,7 +44,7 @@ export const useTransformsState = create<TransformsState>((set, get) => ({
     const { scale } = get();
 
     if (event) {
-      const newScale = clamp(scale - event.deltaY / 5, 50, 200);
+      const newScale = clamp(scale - event.deltaY / 5, 40, 144);
 
       const { x: gridX, y: gridY } = mouseToGridCoords(p5);
 
