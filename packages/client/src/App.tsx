@@ -1,14 +1,13 @@
+import { AuthButton } from './components/AuthButton';
 import { BlockSelector } from './components/BlockSelector';
 import { Canvas } from './components/Canvas';
 import { Discoveries } from './components/Discoveries';
-import { LoginButton } from './components/LoginButton';
-import { LogoutButton } from './components/LogoutButton';
 
 const App = () => {
   return (
-    <div>
-      <LoginButton />
-      <LogoutButton />
+    <div className="p-2">
+      <AuthButton />
+      <h2 className="text-5xl my-6">Find a big yikes!</h2>
       <div className="flex">
         <BlockSelector />
         <Canvas />
