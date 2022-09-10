@@ -17,9 +17,10 @@ export const useTentativeState = create<TentativeState>((set, get) => ({
   blockType: '1x1',
   updateHoveringBlock: (p5: p5Types) => {
     const { blockType, hoveringBlock } = get();
+    const { bin } = useProjectStore.getState();
 
     const mouseInCanvas = isMouseInCanvas(p5);
-    if (!mouseInCanvas) {
+    if (!mouseInCanvas || bin[blockType] === 0) {
       if (hoveringBlock) set({ hoveringBlock: null });
       return;
     }
