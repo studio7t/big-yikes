@@ -9,12 +9,20 @@ const GRID_SIZE = 64;
 
 const gridXOffset = ({ scale, translate }: TransformsState) => {
   const colsTranslated = Math.abs(translate.x) / scale;
-  return Math.floor(colsTranslated / GRID_SIZE) * (translate.x > 0 ? -1 : 1);
+  return (
+    GRID_SIZE *
+    Math.floor(colsTranslated / GRID_SIZE) *
+    (translate.x > 0 ? -1 : 1)
+  );
 };
 
 const gridYOffset = ({ scale, translate }: TransformsState) => {
   const rowsTranslated = Math.abs(translate.y) / scale;
-  return Math.floor(rowsTranslated / GRID_SIZE) * (translate.y < 0 ? -1 : 1);
+  return (
+    GRID_SIZE *
+    Math.floor(rowsTranslated / GRID_SIZE) *
+    (translate.y < 0 ? -1 : 1)
+  );
 };
 
 export const drawGrid = (p5: p5Types) => {
