@@ -4,43 +4,43 @@ import {
   useTransformsState,
 } from '../stores/transforms.store';
 
-const gridXOffset = (p5: p5Types, { scale, translate }: TransformsState) => {
-  const widthsTranslated = Math.floor(Math.abs(translate.x) / p5.width);
-  let xOffset = widthsTranslated * Math.floor(p5.width / scale);
-  xOffset *= translate.x > 0 ? -1 : 1;
+// TODO might want to derive this from the canvas width and min zoom amount
+const GRID_SIZE = 64;
 
-  return xOffset;
+const gridXOffset = ({ scale, translate }: TransformsState) => {
+  const colsTranslated = Math.abs(translate.x) / scale;
+  return Math.floor(colsTranslated / GRID_SIZE) * (translate.x > 0 ? -1 : 1);
 };
 
-const gridYOffset = (p5: p5Types, { scale, translate }: TransformsState) => {
-  const heightsTranslated = Math.floor(Math.abs(translate.y) / p5.height);
-  let yOffset = heightsTranslated * Math.floor(p5.height / scale);
-  yOffset *= translate.y < 0 ? -1 : 1;
-
-  return yOffset;
+const gridYOffset = ({ scale, translate }: TransformsState) => {
+  const rowsTranslated = Math.abs(translate.y) / scale;
+  return Math.floor(rowsTranslated / GRID_SIZE) * (translate.y < 0 ? -1 : 1);
 };
 
 export const drawGrid = (p5: p5Types) => {
   const transformsState = useTransformsState.getState();
 
   const { scale } = transformsState;
-  const rows = Math.floor(p5.height / scale);
-  const cols = Math.floor(p5.width / scale);
 
-  const xOffset = gridXOffset(p5, transformsState);
-  const yOffset = gridYOffset(p5, transformsState);
+  const xOffset = gridXOffset(transformsState);
+  const yOffset = gridYOffset(transformsState);
 
   p5.stroke(0);
-  p5.strokeWeight(1 / scale);
 
-  const [minX, maxX] = [-2 * cols, 3 * cols];
-  const [minY, maxY] = [-2 * rows, 3 * rows];
-
-  for (let row = minY; row < maxY; row++) {
-    p5.line(minX + xOffset, row + yOffset, maxX + xOffset, row + yOffset);
-  }
-
-  for (let col = minX; col < maxX; col++) {
-    p5.line(col + xOffset, minY + yOffset, col + xOffset, maxY + yOffset);
+  for (let i = -GRID_SIZE; i < 2 * GRID_SIZE; i++) {
+    // TODO might want to make 8 dependent on canvas width and initial zoom
+    p5.strokeWeight(i % 8 === 0 ? 4 / scale : 1 / scale);
+    p5.line(
+      -GRID_SIZE + xOffset,
+      i + yOffset,
+      2 * GRID_SIZE + xOffset,
+      i + yOffset
+    );
+    p5.line(
+      i + xOffset,
+      -GRID_SIZE + yOffset,
+      i + xOffset,
+      2 * GRID_SIZE + yOffset
+    );
   }
 };
