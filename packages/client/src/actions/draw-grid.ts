@@ -36,7 +36,6 @@ export const drawGrid = (p5: p5Types) => {
   p5.stroke(0);
 
   for (let i = -GRID_SIZE; i < 2 * GRID_SIZE; i++) {
-    // TODO might want to make 8 dependent on canvas width and initial zoom
     p5.strokeWeight(i % 8 === 0 ? 4 / scale : 1 / scale);
     p5.line(
       -GRID_SIZE + xOffset,

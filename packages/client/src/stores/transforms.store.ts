@@ -4,6 +4,11 @@ import create from 'zustand';
 import { clamp } from '../utils/math';
 import { isMouseInCanvas, mouseToGridCoords } from '../utils/mouse-to-grid';
 
+const MIN_CANVAS_SIZE = window.innerHeight - 150;
+export const CANVAS_SIZE = Math.min(window.innerHeight * 0.8, MIN_CANVAS_SIZE);
+
+const INITIAL_SCALE = CANVAS_SIZE / 8;
+
 export interface TransformsState {
   scale: number;
   translate: Vector2D;
@@ -14,7 +19,7 @@ export interface TransformsState {
 }
 
 export const useTransformsState = create<TransformsState>((set, get) => ({
-  scale: 90,
+  scale: INITIAL_SCALE,
   translate: { x: 0, y: 0 },
   panning: false,
   pan: (p5: p5Types) => {
@@ -44,7 +49,11 @@ export const useTransformsState = create<TransformsState>((set, get) => ({
     const { scale } = get();
 
     if (event) {
-      const newScale = clamp(scale - event.deltaY / 5, 40, 144);
+      const newScale = clamp(
+        scale - event.deltaY / 5,
+        INITIAL_SCALE / 4,
+        INITIAL_SCALE * 1.5
+      );
 
       const { x: gridX, y: gridY } = mouseToGridCoords(p5);
 
