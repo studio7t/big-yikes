@@ -52,7 +52,7 @@ export const Canvas = () => {
     }
   };
 
-  const onMouseReleased = (p5: p5Types) => {
+  const onMouseClicked = (p5: p5Types) => {
     if (panning) {
       setPanning(false);
     } else {
@@ -61,11 +61,11 @@ export const Canvas = () => {
 
       if (blockAtMouse) {
         removeBlock(blockAtMouse);
-      } else if (hoveringBlock) {
-        addBlock(hoveringBlock);
+      } else {
+        addBlock(mouseCoords);
       }
 
-      updateHoveringBlock(p5);
+      if (hoveringBlock) updateHoveringBlock(p5);
     }
   };
 
@@ -74,7 +74,7 @@ export const Canvas = () => {
     if (key === '1') setBlockType('1x1');
     else if (key === '2') setBlockType('1x2');
 
-    updateHoveringBlock(p5);
+    if (hoveringBlock) updateHoveringBlock(p5);
   };
 
   const onMouseMoved = (p5: p5Types) => {
@@ -97,7 +97,7 @@ export const Canvas = () => {
     <Sketch
       setup={setup}
       draw={draw}
-      mouseReleased={onMouseReleased}
+      mouseClicked={onMouseClicked}
       keyPressed={onKeyPressed}
       mouseWheel={zoom}
       mouseMoved={onMouseMoved}

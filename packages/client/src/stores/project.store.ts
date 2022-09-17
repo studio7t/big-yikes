@@ -6,6 +6,7 @@ import {
   defaultBin,
   growBounds,
   Structure,
+  Vector2D,
 } from '@big-yikes/lib';
 import create from 'zustand';
 import snapUrl from '../assets/snap.mp3';
@@ -16,7 +17,7 @@ interface ProjectState {
   structure: Structure;
   addToBin: (blockType: BlockTypeSlug, count?: number) => void;
   removeFromBin: (blockType: BlockTypeSlug, count?: number) => void;
-  addBlockIfValid: (block: Block) => boolean;
+  addBlockIfValid: (position: Vector2D) => boolean;
   removeBlockIfValid: (block: Block) => boolean;
 }
 
@@ -47,12 +48,14 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
     }
     set({ bin: { ...bin, [blockType]: Math.max(bin[blockType] - count, 0) } });
   },
-  addBlockIfValid: (block: Block) => {
+  addBlockIfValid: (position: Vector2D) => {
     const { bin, removeFromBin } = get();
-    if (bin[block.type] === 0) {
+    const { blockType } = useTentativeStore.getState();
+    if (bin[blockType] === 0) {
       return false;
     }
 
+    const block = new Block(blockType, position);
     const nearbyBlocks = get().structure.getBlocksInBounds(
       growBounds(block.bounds)
     );
