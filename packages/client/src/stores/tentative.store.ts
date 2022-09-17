@@ -2,7 +2,7 @@ import { Block, BlockTypeSlug, growBounds } from '@big-yikes/lib';
 import p5Types from 'p5';
 import create from 'zustand';
 import tickUrl from '../assets/tick.mp3';
-import { isMouseInCanvas, snapMouseToGridCoords } from '../utils/mouse-to-grid';
+import { snapMouseToGridCoords } from '../utils/mouse-to-grid';
 import { useProjectStore } from './project.store';
 
 interface TentativeState {
@@ -19,8 +19,7 @@ export const useTentativeStore = create<TentativeState>((set, get) => ({
     const { blockType, hoveringBlock } = get();
     const { bin } = useProjectStore.getState();
 
-    const mouseInCanvas = isMouseInCanvas(p5);
-    if (!mouseInCanvas || bin[blockType] === 0) {
+    if (bin[blockType] === 0) {
       if (hoveringBlock) set({ hoveringBlock: null });
       return;
     }

@@ -2,7 +2,7 @@ import { Vector2D } from '@big-yikes/lib';
 import p5Types from 'p5';
 import create from 'zustand';
 import { clamp } from '../utils/math';
-import { isMouseInCanvas, mouseToGridCoords } from '../utils/mouse-to-grid';
+import { mouseToGridCoords } from '../utils/mouse-to-grid';
 
 const MIN_CANVAS_SIZE = window.innerHeight - 150;
 export const CANVAS_SIZE = Math.min(window.innerHeight * 0.8, MIN_CANVAS_SIZE);
@@ -23,10 +23,6 @@ export const useTransformsState = create<TransformsState>((set, get) => ({
   translate: { x: 0, y: 0 },
   panning: false,
   pan: (p5: p5Types) => {
-    if (!isMouseInCanvas(p5)) {
-      return;
-    }
-
     const { translate, panning, setPanning } = get();
 
     if (!panning) setPanning(true);
@@ -42,10 +38,6 @@ export const useTransformsState = create<TransformsState>((set, get) => ({
     set({ translate: newTranslate });
   },
   zoom: (p5: p5Types, event?: WheelEvent) => {
-    if (!isMouseInCanvas(p5)) {
-      return;
-    }
-
     const { scale } = get();
 
     if (event) {
@@ -66,6 +58,8 @@ export const useTransformsState = create<TransformsState>((set, get) => ({
         translate: { x: newTranslateX, y: Math.max(0, newTranslateY) },
       });
     }
+
+    return false;
   },
   setPanning: (val) => set({ panning: val }),
 }));

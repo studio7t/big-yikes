@@ -7,7 +7,7 @@ import { applyTransforms, flipCanvas } from '../actions/transform';
 import { useProjectStore } from '../stores/project.store';
 import { useTentativeStore } from '../stores/tentative.store';
 import { CANVAS_SIZE, useTransformsState } from '../stores/transforms.store';
-import { snapMouseToGridCoords } from '../utils/mouse-to-grid';
+import { isMouseInCanvas, snapMouseToGridCoords } from '../utils/mouse-to-grid';
 
 export const Canvas = () => {
   const { addBlock, removeBlock, structure } = useProjectStore((state) => ({
@@ -53,6 +53,8 @@ export const Canvas = () => {
   };
 
   const onMouseClicked = (p5: p5Types) => {
+    if (!isMouseInCanvas(p5)) return;
+
     if (panning) {
       setPanning(false);
     } else {
@@ -78,6 +80,8 @@ export const Canvas = () => {
   };
 
   const onMouseMoved = (p5: p5Types) => {
+    if (!isMouseInCanvas(p5)) return;
+
     const snappedMousePos = snapMouseToGridCoords(p5);
 
     if (
@@ -90,7 +94,16 @@ export const Canvas = () => {
   };
 
   const onMouseDragged = (p5: p5Types) => {
+    if (!isMouseInCanvas(p5)) return;
+
     if (p5.keyIsPressed && p5.key === ' ') pan(p5);
+  };
+
+  const onMouseWheel = (p5: p5Types, event?: WheelEvent) => {
+    if (!isMouseInCanvas(p5)) return;
+
+    zoom(p5, event);
+    event?.preventDefault();
   };
 
   return (
@@ -99,7 +112,7 @@ export const Canvas = () => {
       draw={draw}
       mouseClicked={onMouseClicked}
       keyPressed={onKeyPressed}
-      mouseWheel={zoom}
+      mouseWheel={onMouseWheel}
       mouseMoved={onMouseMoved}
       mouseDragged={onMouseDragged}
     />
