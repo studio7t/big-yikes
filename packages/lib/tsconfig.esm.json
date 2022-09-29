@@ -5,5 +5,5 @@
 		"outDir": "./dist/esm",
 		"target": "es6"
 	},
-	"exclude": ["src/**/*.test.ts", "src/test"]
+	"exclude": ["src/**/*.test.ts", "src/test", "node_modules", "dist"]
 }

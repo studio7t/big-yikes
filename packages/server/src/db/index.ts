@@ -1,8 +1,10 @@
-import { Pool } from 'pg';
+import { MongoClient } from 'mongodb';
 
-export const pool = new Pool({ connectionString: process.env.POSTGRES_URL });
+const url = process.env.MONGO_URL ?? 'mongodb://localhost:27017';
+const client = new MongoClient(url);
 
-export const query = async (text: string, params?: string[]) => {
-  const res = await pool.query(text, params);
-  return res.rows;
+export const db = client.db('big_yikes');
+
+export const close = async () => {
+  client.close();
 };

@@ -8,11 +8,16 @@
     "client": "yarn --cwd ./packages/client",
     "lib": "yarn --cwd ./packages/lib",
     "server": "yarn --cwd ./packages/server",
-    "dev": "concurrently -n \"client,lib\" \"yarn client dev\" \"yarn lib dev\"",
-    "lint": "yarn client lint && yarn lib lint",
-    "postinstall": "yarn client; yarn lib"
+    "dev": "concurrently -n \"lib,client,server\" \"yarn lib dev\" \"yarn client dev\" \"yarn server dev\"",
+    "test": "yarn lib test && yarn client test && yarn server test",
+    "lint": "yarn lib lint && yarn client lint && yarn server lint",
+    "postinstall": "yarn lib; yarn client; yarn server; husky install"
   },
   "devDependencies": {
-    "concurrently": "^7.2.2"
+    "@commitlint/cli": "^17.0.3",
+    "@commitlint/config-conventional": "^17.0.3",
+    "concurrently": "^7.2.2",
+    "husky": "^8.0.1",
+    "lint-staged": "^13.0.3"
   }
 }
