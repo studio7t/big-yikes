@@ -11,7 +11,7 @@ h1 {
   font-family: KCLeisure;
   font-size: 150px;
   color: #f20d0d;
-  line-height: 150px;
+  line-height: 1;
   text-align: center;
   margin-bottom: -35px;
 }

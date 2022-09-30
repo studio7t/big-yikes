@@ -70,8 +70,6 @@ export const Canvas = () => {
   };
 
   const onMouseMoved = (p5: p5Types) => {
-    if (!isMouseInCanvas(p5)) return;
-
     const snappedMousePos = snapMouseToGridCoords(p5);
 
     if (

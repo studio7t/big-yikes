@@ -9,7 +9,7 @@ const App = () => {
       <h1>Big Yikes</h1>
       <h2>can you make a big yikes?</h2>
 
-      <div className="flex justify-center">
+      <div className="flex justify-center select-none">
         <Canvas />
       </div>
 

@@ -3,6 +3,7 @@ import p5Types from 'p5';
 import create from 'zustand';
 import tickUrl from '../assets/tick.mp3';
 import { snapMouseToGridCoords } from '../utils/coord-conversion';
+import { isMouseInCanvas } from '../utils/mouse-in-canvas';
 import { useProjectStore } from './project.store';
 
 interface TentativeState {
@@ -19,7 +20,7 @@ export const useTentativeStore = create<TentativeState>((set, get) => ({
     const { blockType, hoveringBlock } = get();
     const { bin } = useProjectStore.getState();
 
-    if (bin[blockType] === 0) {
+    if (bin[blockType] === 0 || !isMouseInCanvas(p5)) {
       if (hoveringBlock) set({ hoveringBlock: null });
       return;
     }
