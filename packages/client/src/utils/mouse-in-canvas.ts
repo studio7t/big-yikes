@@ -1,10 +1,11 @@
 import p5Types from 'p5';
+import { CANVAS_BUFFER } from '../stores/transforms.store';
 
 export const isMouseInCanvas = (p5: p5Types) => {
   return (
-    p5.mouseX > 0 &&
-    p5.mouseX < p5.width &&
-    p5.mouseY > 0 &&
-    p5.mouseY < p5.height
+    p5.mouseX > CANVAS_BUFFER &&
+    p5.mouseX < p5.width - CANVAS_BUFFER &&
+    p5.mouseY > CANVAS_BUFFER &&
+    p5.mouseY < p5.height - CANVAS_BUFFER
   );
 };

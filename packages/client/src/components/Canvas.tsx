@@ -6,7 +6,11 @@ import { drawGrid } from '../actions/draw-grid';
 import { applyTransforms, flipCanvas } from '../actions/transform';
 import { useProjectStore } from '../stores/project.store';
 import { useTentativeStore } from '../stores/tentative.store';
-import { CANVAS_HEIGHT, CANVAS_WIDTH } from '../stores/transforms.store';
+import {
+  CANVAS_BUFFER,
+  CANVAS_HEIGHT,
+  CANVAS_WIDTH,
+} from '../stores/transforms.store';
 import { snapMouseToGridCoords } from '../utils/coord-conversion';
 import { isMouseInCanvas } from '../utils/mouse-in-canvas';
 
@@ -27,11 +31,14 @@ export const Canvas = () => {
   );
 
   const setup = (p5: p5Types, canvasParentRef: Element) => {
-    p5.createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT).parent(canvasParentRef);
+    p5.createCanvas(
+      CANVAS_WIDTH + CANVAS_BUFFER * 2,
+      CANVAS_HEIGHT + CANVAS_BUFFER * 2
+    ).parent(canvasParentRef);
   };
 
   const draw = (p5: p5Types) => {
-    p5.background(240);
+    p5.background(255);
 
     applyTransforms(p5);
     flipCanvas(p5);

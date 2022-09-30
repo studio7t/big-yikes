@@ -1,12 +1,12 @@
 import { Vector2D } from '@big-yikes/lib';
 import p5Types from 'p5';
-import { SCALE } from '../stores/transforms.store';
+import { CANVAS_BUFFER, SCALE } from '../stores/transforms.store';
 
 export const mouseToGridCoords = (p5: p5Types): Vector2D => {
   const { mouseX, mouseY } = p5;
 
-  const x = mouseX / SCALE;
-  const y = (p5.height - mouseY) / SCALE;
+  const x = (mouseX - CANVAS_BUFFER) / SCALE;
+  const y = (p5.height - (mouseY + CANVAS_BUFFER)) / SCALE;
 
   return { x, y };
 };
