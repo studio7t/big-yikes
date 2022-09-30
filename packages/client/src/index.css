@@ -4,7 +4,7 @@
 
 @font-face {
   font-family: KCLeisure;
-  src: url('assets/KCLeisurePark-BOLD.otf');
+  src: url(./assets/KCLeisurePark-BOLD.otf);
 }
 
 h1 {
