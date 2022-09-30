@@ -2,7 +2,7 @@ import { Block, BlockTypeSlug, growBounds } from '@big-yikes/lib';
 import p5Types from 'p5';
 import create from 'zustand';
 import tickUrl from '../assets/tick.mp3';
-import { snapMouseToGridCoords } from '../utils/mouse-to-grid';
+import { snapMouseToGridCoords } from '../utils/coord-conversion';
 import { useProjectStore } from './project.store';
 
 interface TentativeState {

@@ -6,8 +6,9 @@ import { drawGrid } from '../actions/draw-grid';
 import { applyTransforms, flipCanvas } from '../actions/transform';
 import { useProjectStore } from '../stores/project.store';
 import { useTentativeStore } from '../stores/tentative.store';
-import { CANVAS_SIZE, useTransformsState } from '../stores/transforms.store';
-import { isMouseInCanvas, snapMouseToGridCoords } from '../utils/mouse-to-grid';
+import { CANVAS_HEIGHT, CANVAS_WIDTH } from '../stores/transforms.store';
+import { snapMouseToGridCoords } from '../utils/coord-conversion';
+import { isMouseInCanvas } from '../utils/mouse-in-canvas';
 
 export const Canvas = () => {
   const { addBlock, removeBlock, structure } = useProjectStore((state) => ({
@@ -16,23 +17,17 @@ export const Canvas = () => {
     removeBlock: state.removeBlockIfValid,
   }));
 
-  const { pan, zoom, panning, setPanning } = useTransformsState((state) => ({
-    pan: state.pan,
-    zoom: state.zoom,
-    panning: state.panning,
-    setPanning: state.setPanning,
-  }));
-
-  const { hoveringBlock, updateHoveringBlock, blockType, setBlockType } =
-    useTentativeStore((state) => ({
+  const { hoveringBlock, updateHoveringBlock, blockType } = useTentativeStore(
+    (state) => ({
       hoveringBlock: state.hoveringBlock,
       updateHoveringBlock: state.updateHoveringBlock,
       blockType: state.blockType,
       setBlockType: state.setBlockType,
-    }));
+    })
+  );
 
   const setup = (p5: p5Types, canvasParentRef: Element) => {
-    p5.createCanvas(CANVAS_SIZE, CANVAS_SIZE).parent(canvasParentRef);
+    p5.createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT).parent(canvasParentRef);
   };
 
   const draw = (p5: p5Types) => {
@@ -55,26 +50,14 @@ export const Canvas = () => {
   const onMouseClicked = (p5: p5Types) => {
     if (!isMouseInCanvas(p5)) return;
 
-    if (panning) {
-      setPanning(false);
+    const mouseCoords = snapMouseToGridCoords(p5);
+    const blockAtMouse = structure.getBlockAtCoords(mouseCoords);
+
+    if (blockAtMouse) {
+      removeBlock(blockAtMouse);
     } else {
-      const mouseCoords = snapMouseToGridCoords(p5);
-      const blockAtMouse = structure.getBlockAtCoords(mouseCoords);
-
-      if (blockAtMouse) {
-        removeBlock(blockAtMouse);
-      } else {
-        addBlock(mouseCoords);
-      }
-
-      if (hoveringBlock) updateHoveringBlock(p5);
+      addBlock(mouseCoords);
     }
-  };
-
-  const onKeyPressed = (p5: p5Types) => {
-    const { key } = p5;
-    if (key === '1') setBlockType('1x1');
-    else if (key === '2') setBlockType('1x2');
 
     if (hoveringBlock) updateHoveringBlock(p5);
   };
@@ -93,28 +76,12 @@ export const Canvas = () => {
     }
   };
 
-  const onMouseDragged = (p5: p5Types) => {
-    if (!isMouseInCanvas(p5)) return;
-
-    if (p5.keyIsPressed && p5.key === ' ') pan(p5);
-  };
-
-  const onMouseWheel = (p5: p5Types, event?: WheelEvent) => {
-    if (!isMouseInCanvas(p5)) return;
-
-    zoom(p5, event);
-    event?.preventDefault();
-  };
-
   return (
     <Sketch
       setup={setup}
       draw={draw}
       mouseClicked={onMouseClicked}
-      keyPressed={onKeyPressed}
-      mouseWheel={onMouseWheel}
       mouseMoved={onMouseMoved}
-      mouseDragged={onMouseDragged}
     />
   );
 };
