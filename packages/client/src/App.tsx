@@ -1,17 +1,18 @@
 import { AuthButton } from './components/AuthButton';
-import { BlockSelector } from './components/BlockSelector';
 import { Canvas } from './components/Canvas';
 import { Discoveries } from './components/Discoveries';
 
 const App = () => {
   return (
-    <div className="p-2">
+    <div className="p-8">
       <AuthButton />
-      <h2 className="text-5xl mt-3 mb-6">Find a big yikes!</h2>
-      <div className="flex">
-        <BlockSelector />
+      <h1>Big Yikes</h1>
+      <h2>can you make a big yikes?</h2>
+
+      <div className="flex justify-center">
         <Canvas />
       </div>
+
       <Discoveries />
     </div>
   );
