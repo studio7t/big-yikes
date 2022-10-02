@@ -40,7 +40,9 @@ const BlockSelectorOption = ({ blockType }: { blockType: BlockTypeSlug }) => {
     blockType === activeBlockType ? 'border-[#f20d0d]' : 'border-transparent';
 
   return (
-    <div className={`border-2 border-dashed ${borderColor} rounded-md`}>
+    <div
+      className={`border-2 p-2 pb-0 border-dashed ${borderColor} rounded-md`}
+    >
       <button onClick={() => setBlockType(blockType)}>
         <svg
           width={size}
