@@ -1,7 +1,6 @@
 **/dist
 **/node_modules
 **/.env*
-!packages/client/.env
 **/.eslint*
 **/.lintstagedrc.json
 **/Dockerfile
