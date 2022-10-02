@@ -4,7 +4,7 @@ import {
   BlockTypeSlug,
   blockTypeSlugs,
 } from '@big-yikes/lib';
-import { useProjectStore } from '../stores/project.store';
+import { useBinStore } from '../stores/bin.store';
 import { useTentativeStore } from '../stores/tentative.store';
 import { CANVAS_WIDTH } from '../stores/transforms.store';
 
@@ -22,7 +22,7 @@ export const BlockSelector = () => {
 };
 
 const BlockSelectorOption = ({ blockType }: { blockType: BlockTypeSlug }) => {
-  const { bin } = useProjectStore((state) => ({ bin: state.bin }));
+  const { bin } = useBinStore((state) => ({ bin: state.bin }));
 
   const { activeBlockType, setBlockType } = useTentativeStore((state) => ({
     activeBlockType: state.blockType,

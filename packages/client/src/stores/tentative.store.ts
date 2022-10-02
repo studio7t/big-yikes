@@ -1,43 +1,33 @@
-import { Block, BlockTypeSlug, growBounds } from '@big-yikes/lib';
-import p5Types from 'p5';
+import { Block, BlockTypeSlug, blockTypeSlugs } from '@big-yikes/lib';
 import create from 'zustand';
-import tickUrl from '../assets/sounds/tick.mp3';
-import { snapMouseToGridCoords } from '../utils/coord-conversion';
-import { isMouseInCanvas } from '../utils/mouse-in-canvas';
-import { useProjectStore } from './project.store';
+import { useBinStore } from './bin.store';
 
 interface TentativeState {
   hoveringBlock: Block | null;
   blockType: BlockTypeSlug;
-  updateHoveringBlock: (p5: p5Types) => void;
+  setHoveringBlock: (block: Block | null) => void;
   setBlockType: (blockType: BlockTypeSlug) => void;
 }
 
-export const useTentativeStore = create<TentativeState>((set, get) => ({
+export const useTentativeStore = create<TentativeState>((set) => ({
   hoveringBlock: null,
   blockType: '1x1',
-  updateHoveringBlock: (p5: p5Types) => {
-    const { blockType, hoveringBlock } = get();
-    const { bin } = useProjectStore.getState();
-
-    if (bin[blockType] === 0 || !isMouseInCanvas(p5)) {
-      if (hoveringBlock) set({ hoveringBlock: null });
-      return;
-    }
-
-    const snappedMousePos = snapMouseToGridCoords(p5);
-    const potentialBlock = new Block(blockType, snappedMousePos);
-    const structure = useProjectStore.getState().structure;
-    const nearbyBlocks = structure.getBlocksInBounds(
-      growBounds(potentialBlock.bounds)
-    );
-
-    if (potentialBlock.isValidAndConnected(nearbyBlocks)) {
-      set({ hoveringBlock: potentialBlock });
-      new Audio(tickUrl).play();
-    } else {
-      set({ hoveringBlock: null });
-    }
-  },
+  setHoveringBlock: (block: Block | null) => set({ hoveringBlock: block }),
   setBlockType: (blockType: BlockTypeSlug) => set({ blockType }),
 }));
+
+export const chooseNextAvailableBlockType = () => {
+  const { bin } = useBinStore.getState();
+  const { blockType } = useTentativeStore.getState();
+  const blockTypeIndex = blockTypeSlugs.findIndex((slug) => slug === blockType);
+
+  const { setBlockType } = useTentativeStore.getState();
+  for (let i = 1; i < blockTypeSlugs.length; i++) {
+    const nextBlockType =
+      blockTypeSlugs[(blockTypeIndex + i) % blockTypeSlugs.length];
+    if (bin[nextBlockType] !== 0) {
+      setBlockType(nextBlockType);
+      break;
+    }
+  }
+};

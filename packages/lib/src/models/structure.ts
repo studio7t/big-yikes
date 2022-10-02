@@ -32,6 +32,14 @@ export class Structure {
     );
   }
 
+  withBlockAdded(block: Block): Structure {
+    return new Structure([...this.blocks, block]);
+  }
+
+  withBlockRemoved(block: Block): Structure {
+    return new Structure(this.blocks.filter((b) => b !== block));
+  }
+
   getBlocksInBounds(bounds: Bounds) {
     return this.tree.search(bounds).map((blockBounds) => blockBounds.block);
   }
@@ -47,10 +55,6 @@ export class Structure {
       if (block.coordinates.find((coord) => vectorIsEqual(coord, { x, y })))
         return block;
     }
-  }
-
-  getBlocksWithout(block: Block) {
-    return this.blocks.filter((b) => b !== block);
   }
 
   isValid() {

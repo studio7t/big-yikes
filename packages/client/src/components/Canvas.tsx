@@ -1,11 +1,21 @@
-import { isEqual } from '@big-yikes/lib';
+import { Block, isEqual } from '@big-yikes/lib';
 import p5Types from 'p5';
 import Sketch from 'react-p5';
 import { drawBlock } from '../actions/draw-block';
 import { drawGrid } from '../actions/draw-grid';
 import { applyTransforms, flipCanvas } from '../actions/transform';
-import { useProjectStore } from '../stores/project.store';
-import { useTentativeStore } from '../stores/tentative.store';
+import snapUrl from '../assets/sounds/snap.mp3';
+import tickUrl from '../assets/sounds/tick.mp3';
+import { useBinStore } from '../stores/bin.store';
+import {
+  ableToAdd,
+  ableToRemove,
+  useProjectStore,
+} from '../stores/project.store';
+import {
+  chooseNextAvailableBlockType,
+  useTentativeStore,
+} from '../stores/tentative.store';
 import {
   CANVAS_BUFFER,
   CANVAS_HEIGHT,
@@ -17,14 +27,20 @@ import { isMouseInCanvas } from '../utils/mouse-in-canvas';
 export const Canvas = () => {
   const { addBlock, removeBlock, structure } = useProjectStore((state) => ({
     structure: state.structure,
-    addBlock: state.addBlockIfValid,
-    removeBlock: state.removeBlockIfValid,
+    addBlock: state.addBlock,
+    removeBlock: state.removeBlock,
   }));
 
-  const { hoveringBlock, updateHoveringBlock, blockType } = useTentativeStore(
+  const { addToBin, removeFromBin, bin } = useBinStore((state) => ({
+    bin: state.bin,
+    addToBin: state.addToBin,
+    removeFromBin: state.removeFromBin,
+  }));
+
+  const { hoveringBlock, setHoveringBlock, blockType } = useTentativeStore(
     (state) => ({
       hoveringBlock: state.hoveringBlock,
-      updateHoveringBlock: state.updateHoveringBlock,
+      setHoveringBlock: state.setHoveringBlock,
       blockType: state.blockType,
       setBlockType: state.setBlockType,
     })
@@ -61,23 +77,42 @@ export const Canvas = () => {
     const blockAtMouse = structure.getBlockAtCoords(mouseCoords);
 
     if (blockAtMouse) {
-      removeBlock(blockAtMouse);
+      if (ableToRemove(blockAtMouse)) {
+        removeBlock(blockAtMouse);
+        addToBin(blockAtMouse.type);
+      }
     } else {
-      addBlock(mouseCoords);
+      const block = new Block(blockType, mouseCoords);
+      if (ableToAdd(block)) {
+        removeFromBin(block.type);
+        addBlock(block);
+
+        new Audio(snapUrl).play();
+
+        if (bin[block.type] === 0) chooseNextAvailableBlockType();
+      }
     }
 
-    if (hoveringBlock) updateHoveringBlock(p5);
+    setHoveringBlock(null);
   };
 
   const onMouseMoved = (p5: p5Types) => {
     const snappedMousePos = snapMouseToGridCoords(p5);
 
-    if (
+    const shouldUpdateHoveringBlock =
       hoveringBlock === null ||
       hoveringBlock.type !== blockType ||
-      !isEqual(hoveringBlock.position, snappedMousePos)
-    ) {
-      updateHoveringBlock(p5);
+      !isEqual(hoveringBlock.position, snappedMousePos);
+
+    if (shouldUpdateHoveringBlock) {
+      const block = new Block(blockType, snappedMousePos);
+      if (!isMouseInCanvas(p5) || bin[blockType] === 0 || !ableToAdd(block)) {
+        setHoveringBlock(null);
+      } else {
+        setHoveringBlock(block);
+
+        new Audio(tickUrl).play();
+      }
     }
   };
 

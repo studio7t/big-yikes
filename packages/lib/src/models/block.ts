@@ -51,11 +51,8 @@ export class Block {
     return !this.isUnderground() && !this.isOverlapping(others);
   }
 
-  isValidAndConnected(others: Block[]) {
-    return (
-      this.isValid(others) &&
-      (this.isOnTheGround() || this.isAdjacentToAnother(others))
-    );
+  isConnected(others: Block[]) {
+    return this.isOnTheGround() || this.isAdjacentToAnother(others);
   }
 
   isOverlapping(others: Block[]) {
