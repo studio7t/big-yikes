@@ -3,23 +3,6 @@
 @tailwind utilities;
 
 @font-face {
-  font-family: KCLeisure;
+  font-family: leisure;
   src: url(/leisure.otf);
-}
-
-h1 {
-  font-family: KCLeisure;
-  font-size: 150px;
-  color: #f20d0d;
-  line-height: 1;
-  text-align: center;
-  margin-bottom: -35px;
-}
-
-h2 {
-  font-family: 'Courier New', Courier, monospace;
-  font-size: 30px;
-  color: #f20d0d;
-  text-align: center;
-  margin: 10px;
 }

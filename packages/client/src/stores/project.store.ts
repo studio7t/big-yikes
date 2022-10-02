@@ -9,7 +9,7 @@ import {
   Vector2D,
 } from '@big-yikes/lib';
 import create from 'zustand';
-import snapUrl from '../assets/snap.mp3';
+import snapUrl from '../assets/sounds/snap.mp3';
 import { useTentativeStore } from './tentative.store';
 
 interface ProjectState {

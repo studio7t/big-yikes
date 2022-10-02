@@ -6,6 +6,20 @@ import {
 } from '@big-yikes/lib';
 import { useProjectStore } from '../stores/project.store';
 import { useTentativeStore } from '../stores/tentative.store';
+import { CANVAS_WIDTH } from '../stores/transforms.store';
+
+export const BlockSelector = () => {
+  return (
+    <div
+      className="flex justify-between p-2 border-solid border-2 border-[#f20d0d]"
+      style={{ width: CANVAS_WIDTH }}
+    >
+      {blockTypeSlugs.map((slug) => (
+        <BlockSelectorOption key={slug} blockType={slug} />
+      ))}
+    </div>
+  );
+};
 
 const BlockSelectorOption = ({ blockType }: { blockType: BlockTypeSlug }) => {
   const { bin } = useProjectStore((state) => ({ bin: state.bin }));
@@ -19,46 +33,39 @@ const BlockSelectorOption = ({ blockType }: { blockType: BlockTypeSlug }) => {
 
   const block = new Block(blockType, { x: 0, y: 0 });
   const blockWidth = block.bounds.maxX + 1 - block.bounds.minX;
-  const blockHeight = block.bounds.maxY + 1 - block.bounds.minY;
+
+  const isRightAligned = block.coordinates.find((coord) => coord.x < 0);
 
   const borderColor =
-    blockType === activeBlockType ? 'border-gray-500' : 'border-transparent';
-
-  const bgColor = bin[blockType] === 0 ? 'bg-gray-400' : '';
+    blockType === activeBlockType ? 'border-[#f20d0d]' : 'border-transparent';
 
   return (
-    <div
-      className={`border-2 border-dashed ${borderColor} rounded-md ${bgColor}`}
-    >
-      <button className="p-2" onClick={() => setBlockType(blockType)}>
+    <div className={`border-2 border-dashed ${borderColor} rounded-md`}>
+      <button onClick={() => setBlockType(blockType)}>
         <svg
           width={size}
           height={size}
-          viewBox={`0 0 ${blockWidth} ${blockHeight}`}
+          viewBox={'0 0 6 6'}
           fill={blockTypes[blockType].color}
+          stroke={blockTypes[blockType].color}
+          strokeWidth="0.1"
         >
           {block.coordinates.map((coord) => (
             <rect
               key={`${coord.x}-${coord.y}`}
-              x={coord.x}
-              y={blockHeight - 1 - coord.y}
-              width="1"
-              height="1"
+              x={
+                2 * (coord.x + 1) -
+                (blockWidth === 2 ? 1 : 0) +
+                (blockWidth === 2 && isRightAligned ? 2 : 0)
+              }
+              y={6 - 2 * coord.y - 2}
+              width="2"
+              height="2"
             />
           ))}
         </svg>
       </button>
-      <p className="text-center">{bin[blockType]}</p>
-    </div>
-  );
-};
-
-export const BlockSelector = () => {
-  return (
-    <div className="p-2 space-y-2">
-      {blockTypeSlugs.map((slug) => (
-        <BlockSelectorOption key={slug} blockType={slug} />
-      ))}
+      <p className="text-center text-[#f20d0d]">{bin[blockType]}</p>
     </div>
   );
 };

@@ -1,10 +1,12 @@
 module.exports = {
-  content: [
-    "./index.html",
-    "./src/**/*.{ts,tsx}",
-  ],
+  content: ['./index.html', './src/**/*.{ts,tsx}'],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        leisure: ['leisure'],
+        courier: ['Courier New', 'Courier', 'monospace'],
+      },
+    },
   },
   plugins: [],
-}
+};

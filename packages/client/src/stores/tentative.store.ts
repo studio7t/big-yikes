@@ -1,7 +1,7 @@
 import { Block, BlockTypeSlug, growBounds } from '@big-yikes/lib';
 import p5Types from 'p5';
 import create from 'zustand';
-import tickUrl from '../assets/tick.mp3';
+import tickUrl from '../assets/sounds/tick.mp3';
 import { snapMouseToGridCoords } from '../utils/coord-conversion';
 import { isMouseInCanvas } from '../utils/mouse-in-canvas';
 import { useProjectStore } from './project.store';
