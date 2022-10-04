@@ -1,6 +1,6 @@
 import { Block, blockTypes } from '@big-yikes/lib';
 import p5Types from 'p5';
-import { SCALE } from '../stores/transforms.store';
+import { SCALE } from '../utils/diminsions';
 
 export const drawBlock = (
   p5: p5Types,

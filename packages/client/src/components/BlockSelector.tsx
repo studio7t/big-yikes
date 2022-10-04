@@ -6,7 +6,7 @@ import {
 } from '@big-yikes/lib';
 import { useBinStore } from '../stores/bin.store';
 import { useTentativeStore } from '../stores/tentative.store';
-import { CANVAS_WIDTH } from '../stores/transforms.store';
+import { CANVAS_WIDTH } from '../utils/diminsions';
 
 export const BlockSelector = () => {
   return (

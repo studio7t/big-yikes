@@ -7,6 +7,7 @@ import { applyTransforms, flipCanvas } from '../actions/transform';
 import snapUrl from '../assets/sounds/snap.mp3';
 import tickUrl from '../assets/sounds/tick.mp3';
 import { useBinStore } from '../stores/bin.store';
+import { combineActions, history } from '../stores/history';
 import {
   ableToAdd,
   ableToRemove,
@@ -16,12 +17,12 @@ import {
   chooseNextAvailableBlockType,
   useTentativeStore,
 } from '../stores/tentative.store';
+import { snapMouseToGridCoords } from '../utils/coord-conversion';
 import {
   CANVAS_BUFFER,
   CANVAS_HEIGHT,
   CANVAS_WIDTH,
-} from '../stores/transforms.store';
-import { snapMouseToGridCoords } from '../utils/coord-conversion';
+} from '../utils/diminsions';
 import { isMouseInCanvas } from '../utils/mouse-in-canvas';
 
 export const Canvas = () => {
@@ -78,14 +79,16 @@ export const Canvas = () => {
 
     if (blockAtMouse) {
       if (ableToRemove(blockAtMouse)) {
-        removeBlock(blockAtMouse);
-        addToBin(blockAtMouse.type);
+        history.addAction(
+          combineActions(removeBlock(blockAtMouse), addToBin(blockAtMouse.type))
+        );
       }
     } else {
       const block = new Block(blockType, mouseCoords);
       if (ableToAdd(block)) {
-        removeFromBin(block.type);
-        addBlock(block);
+        history.addAction(
+          combineActions(removeFromBin(block.type), addBlock(block))
+        );
 
         new Audio(snapUrl).play();
 
@@ -116,12 +119,18 @@ export const Canvas = () => {
     }
   };
 
+  const onKeyPressed = (p5: p5Types) => {
+    if (p5.key === 'u') history.undo();
+    else if (p5.key === 'r') history.redo();
+  };
+
   return (
     <Sketch
       setup={setup}
       draw={draw}
       mouseClicked={onMouseClicked}
       mouseMoved={onMouseMoved}
+      keyPressed={onKeyPressed}
     />
   );
 };

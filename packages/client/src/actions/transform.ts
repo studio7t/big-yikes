@@ -1,5 +1,5 @@
 import p5Types from 'p5';
-import { CANVAS_BUFFER, SCALE } from '../stores/transforms.store';
+import { CANVAS_BUFFER, SCALE } from '../utils/diminsions';
 
 export const applyTransforms = (p5: p5Types) => {
   p5.translate(CANVAS_BUFFER, -CANVAS_BUFFER);

@@ -1,5 +1,5 @@
 import p5Types from 'p5';
-import { NUM_COLS, NUM_ROWS, SCALE } from '../stores/transforms.store';
+import { NUM_COLS, NUM_ROWS, SCALE } from '../utils/diminsions';
 
 export const drawGrid = (p5: p5Types) => {
   p5.stroke('#F20D0D');
