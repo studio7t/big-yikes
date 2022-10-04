@@ -21,7 +21,6 @@ export const useBinStore = create<BinState>((set, get) => ({
     };
 
     forward();
-
     return { forward, backward };
   },
   removeFromBin: (blockType: BlockTypeSlug, count = 1) => {
@@ -37,7 +36,6 @@ export const useBinStore = create<BinState>((set, get) => ({
     };
 
     forward();
-
     return { forward, backward };
   },
 }));

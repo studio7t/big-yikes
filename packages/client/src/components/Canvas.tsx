@@ -26,11 +26,14 @@ import {
 import { isMouseInCanvas } from '../utils/mouse-in-canvas';
 
 export const Canvas = () => {
-  const { addBlock, removeBlock, structure } = useProjectStore((state) => ({
-    structure: state.structure,
-    addBlock: state.addBlock,
-    removeBlock: state.removeBlock,
-  }));
+  const { addBlock, removeBlock, structure, clear } = useProjectStore(
+    (state) => ({
+      structure: state.structure,
+      addBlock: state.addBlock,
+      removeBlock: state.removeBlock,
+      clear: state.clear,
+    })
+  );
 
   const { addToBin, removeFromBin, bin } = useBinStore((state) => ({
     bin: state.bin,
@@ -122,6 +125,8 @@ export const Canvas = () => {
   const onKeyPressed = (p5: p5Types) => {
     if (p5.key === 'u') history.undo();
     else if (p5.key === 'r') history.redo();
+    else if (p5.key === 'c' && structure.blocks.length > 0)
+      history.addAction(clear());
   };
 
   return (

@@ -7,6 +7,7 @@ interface ProjectState {
   structure: Structure;
   addBlock: (block: Block) => HistoryAction;
   removeBlock: (block: Block) => HistoryAction;
+  clear: () => HistoryAction;
 }
 
 export const useProjectStore = create<ProjectState>((set, get) => ({
@@ -18,7 +19,6 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
     const backward = () => get().removeBlock(block);
 
     forward();
-
     return { forward, backward };
   },
   removeBlock: (block: Block) => {
@@ -28,7 +28,16 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
     const backward = () => get().addBlock(block);
 
     forward();
+    return { forward, backward };
+  },
+  clear: () => {
+    const forward = () => set({ structure: new Structure([]) });
 
+    const beforeClear = get().structure;
+    const backward = () =>
+      set({ structure: new Structure(beforeClear.blocks) });
+
+    forward();
     return { forward, backward };
   },
 }));
