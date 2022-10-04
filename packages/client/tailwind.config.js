@@ -6,6 +6,9 @@ module.exports = {
         leisure: ['leisure'],
         courier: ['Courier New', 'Courier', 'monospace'],
       },
+      colors: {
+        primary: '#f20d0d',
+      },
     },
   },
   plugins: [],

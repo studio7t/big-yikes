@@ -11,7 +11,7 @@ import { CANVAS_WIDTH } from '../utils/diminsions';
 export const BlockSelector = () => {
   return (
     <div
-      className="flex justify-between p-2 border-solid border-2 border-[#f20d0d]"
+      className="flex justify-between p-2 border-solid border-2 border-primary"
       style={{ width: CANVAS_WIDTH }}
     >
       {blockTypeSlugs.map((slug) => (
@@ -37,7 +37,7 @@ const BlockSelectorOption = ({ blockType }: { blockType: BlockTypeSlug }) => {
   const isRightAligned = block.coordinates.find((coord) => coord.x < 0);
 
   const borderColor =
-    blockType === activeBlockType ? 'border-[#f20d0d]' : 'border-transparent';
+    blockType === activeBlockType ? 'border-primary' : 'border-transparent';
 
   return (
     <div
@@ -67,7 +67,7 @@ const BlockSelectorOption = ({ blockType }: { blockType: BlockTypeSlug }) => {
           ))}
         </svg>
       </button>
-      <p className="text-center text-[#f20d0d]">{bin[blockType]}</p>
+      <p className="text-center text-primary">{bin[blockType]}</p>
     </div>
   );
 };
