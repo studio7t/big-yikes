@@ -1,9 +1,6 @@
 # Builder
 FROM node:16-alpine as builder
 
-# install file server dep
-RUN npm install http-server -g
-
 # build lib
 WORKDIR /usr/src/app/lib
 
@@ -23,5 +20,13 @@ RUN yarn --no-progress --frozen-lockfile
 
 COPY ./packages/client ./
 
-CMD ["/bin/sh", "-c", "yarn build && http-server -p 80 ./dist"]
+RUN yarn build
 
+# Runner
+FROM nginx:alpine AS runner
+
+COPY --from=builder /usr/src/app/client/dist /usr/share/nginx/html
+COPY ./packages/client/entrypoint.sh ./
+
+EXPOSE 80
+CMD ["./entrypoint.sh"]
