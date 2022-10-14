@@ -1,6 +1,7 @@
 import { useAuth0 } from '@auth0/auth0-react';
 import { Discovery } from '@big-yikes/lib';
 import { useEffect, useState } from 'react';
+import config from '../config';
 import { useProjectStore } from '../stores/project.store';
 
 export const useDiscoveries = () => {
@@ -13,11 +14,11 @@ export const useDiscoveries = () => {
   useEffect(() => {
     const submitDiscovery = async () => {
       const accessToken = await getAccessTokenSilently({
-        audience: import.meta.env.VITE_AUTH0_AUDIENCE,
+        audience: config.auth.auth0Audience,
       });
 
       try {
-        const res = await fetch(`${import.meta.env.VITE_API_HOST}/discovery`, {
+        const res = await fetch(`${config.hosts.api}/discovery`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
