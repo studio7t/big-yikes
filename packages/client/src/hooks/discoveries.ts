@@ -8,6 +8,7 @@ export const useDiscoveries = () => {
   const { getAccessTokenSilently, isAuthenticated } = useAuth0();
   const [discoveries, setDiscoveries] = useState<Discovery[]>([]);
   const [isDiscovery, setIsDiscovery] = useState(false);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     const submitDiscovery = async () => {
@@ -15,17 +16,25 @@ export const useDiscoveries = () => {
         audience: import.meta.env.VITE_AUTH0_AUDIENCE,
       });
 
-      const res = await fetch(`${import.meta.env.VITE_API_HOST}/discovery`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessToken}`,
-        },
-        body: JSON.stringify({ blocks: structure.blocks }),
-      });
+      try {
+        const res = await fetch(`${import.meta.env.VITE_API_HOST}/discovery`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+          },
+          body: JSON.stringify({ blocks: structure.blocks }),
+        });
 
-      const discoveries = await res.json();
-      setDiscoveries(discoveries);
+        if (res.ok) {
+          const discoveries = await res.json();
+          setDiscoveries(discoveries);
+        } else {
+          setError(true);
+        }
+      } catch (err) {
+        setError(true);
+      }
     };
 
     setDiscoveries([]);
@@ -38,5 +47,5 @@ export const useDiscoveries = () => {
     }
   }, [structure]);
 
-  return { isAuthenticated, discoveries, isDiscovery };
+  return { discoveries, isDiscovery, error };
 };
