@@ -18,11 +18,11 @@ declare global {
 
 export default globalThis.env || {
   auth: {
-    auth0Audience: import.meta.env.VITE_AUTH0_AUD,
+    auth0Audience: import.meta.env.VITE_AUTH0_AUDIENCE,
     auth0ClientId: import.meta.env.VITE_AUTH0_CLIENT_ID,
     auth0Domain: import.meta.env.VITE_AUTH0_DOMAIN,
   },
   hosts: {
-    api: import.meta.env.VITE_GEOMETRY_API_HOST,
+    api: import.meta.env.VITE_API_HOST,
   },
 };
