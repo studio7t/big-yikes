@@ -69,7 +69,7 @@ export const discoveryRoutes = async (fastify: FastifyInstance) => {
           time: discovery.time,
           username: discovery.username,
         }))
-        .sort((a, b) => a.time - b.time);
+        .sort((a, b) => b.time - a.time);
       reply.status(200).send(formattedDiscoveries);
     }
   );
