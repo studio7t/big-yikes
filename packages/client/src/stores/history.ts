@@ -46,6 +46,11 @@ class History {
     this.events[this.currentEventIndex].forward();
     this.currentEventIndex++;
   }
+
+  reset() {
+    this.events = [];
+    this.currentEventIndex = 0;
+  }
 }
 
 export const history = new History();

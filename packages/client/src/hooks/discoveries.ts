@@ -1,18 +1,24 @@
 import { useAuth0 } from '@auth0/auth0-react';
-import { Discovery } from '@big-yikes/lib';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import config from '../config';
+import { useDiscoveryStore } from '../stores/discovery.store';
 import { useProjectStore } from '../stores/project.store';
 
 export const useDiscoveries = () => {
   const structure = useProjectStore((state) => state.structure);
   const { getAccessTokenSilently, isAuthenticated } = useAuth0();
-  const [discoveries, setDiscoveries] = useState<Discovery[]>([]);
-  const [isDiscovery, setIsDiscovery] = useState(false);
-  const [error, setError] = useState(false);
+  const { setDiscoveries, setError, setIsDiscovery, setIsLoading } =
+    useDiscoveryStore((state) => ({
+      setDiscoveries: state.setDiscoveries,
+      setError: state.setError,
+      setIsDiscovery: state.setIsDiscovery,
+      setIsLoading: state.setIsLoading,
+    }));
 
   useEffect(() => {
     const submitDiscovery = async () => {
+      setIsLoading(true);
+
       const accessToken = await getAccessTokenSilently({
         audience: config.auth.auth0Audience,
       });
@@ -36,6 +42,8 @@ export const useDiscoveries = () => {
       } catch (err) {
         setError(true);
       }
+
+      setIsLoading(false);
     };
 
     setDiscoveries([]);
@@ -47,6 +55,4 @@ export const useDiscoveries = () => {
       setIsDiscovery(false);
     }
   }, [structure]);
-
-  return { discoveries, isDiscovery, error };
 };

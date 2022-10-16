@@ -6,13 +6,13 @@ import {
 } from '@big-yikes/lib';
 import { useBinStore } from '../stores/bin.store';
 import { useTentativeStore } from '../stores/tentative.store';
-import { CANVAS_WIDTH } from '../utils/diminsions';
+import { CANVAS_WIDTH, GRID_BORDER_WIDTH } from '../utils/dimensions';
 
 export const BlockSelector = () => {
   return (
     <div
-      className="flex justify-between p-2 border-solid border-2 border-primary"
-      style={{ width: CANVAS_WIDTH }}
+      className="flex justify-between p-2 border-solid border-primary"
+      style={{ width: CANVAS_WIDTH, borderWidth: GRID_BORDER_WIDTH }}
     >
       {blockTypeSlugs.map((slug) => (
         <BlockSelectorOption key={slug} blockType={slug} />

@@ -1,6 +1,6 @@
 import { Vector2D } from '@big-yikes/lib';
 import p5Types from 'p5';
-import { CANVAS_BUFFER, SCALE } from './diminsions';
+import { CANVAS_BUFFER, SCALE } from './dimensions';
 
 export const mouseToGridCoords = (p5: p5Types): Vector2D => {
   const { mouseX, mouseY } = p5;

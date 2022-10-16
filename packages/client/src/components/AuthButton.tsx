@@ -9,5 +9,5 @@ export const AuthButton = () => {
     ? () => logout({ returnTo: window.location.origin })
     : () => loginWithRedirect();
 
-  return <Button text={contents} onClick={handler} />;
+  return <Button onClick={handler}>{contents}</Button>;
 };

@@ -7,6 +7,7 @@ import { applyTransforms, flipCanvas } from '../actions/transform';
 import snapUrl from '../assets/sounds/snap.mp3';
 import tickUrl from '../assets/sounds/tick.mp3';
 import { useBinStore } from '../stores/bin.store';
+import { useDiscoveryStore } from '../stores/discovery.store';
 import { combineActions, history } from '../stores/history';
 import {
   ableToAdd,
@@ -18,14 +19,10 @@ import {
   useTentativeStore,
 } from '../stores/tentative.store';
 import { snapMouseToGridCoords } from '../utils/coord-conversion';
-import {
-  CANVAS_BUFFER,
-  CANVAS_HEIGHT,
-  CANVAS_WIDTH,
-} from '../utils/diminsions';
+import { TOTAL_CANAS_WIDTH, TOTAL_CANVAS_HEIGHT } from '../utils/dimensions';
 import { isMouseInCanvas } from '../utils/mouse-in-canvas';
 
-export const Canvas = () => {
+export const Board = () => {
   const { addBlock, removeBlock, structure, clear } = useProjectStore(
     (state) => ({
       structure: state.structure,
@@ -50,11 +47,14 @@ export const Canvas = () => {
     })
   );
 
+  const { isDiscovery } = useDiscoveryStore((state) => ({
+    isDiscovery: state.isDiscovery,
+  }));
+
   const setup = (p5: p5Types, canvasParentRef: Element) => {
-    p5.createCanvas(
-      CANVAS_WIDTH + CANVAS_BUFFER * 2,
-      CANVAS_HEIGHT + CANVAS_BUFFER * 2
-    ).parent(canvasParentRef);
+    p5.createCanvas(TOTAL_CANAS_WIDTH, TOTAL_CANVAS_HEIGHT).parent(
+      canvasParentRef
+    );
   };
 
   const draw = (p5: p5Types) => {
@@ -133,9 +133,13 @@ export const Canvas = () => {
     <Sketch
       setup={setup}
       draw={draw}
-      mouseClicked={onMouseClicked}
-      mouseMoved={onMouseMoved}
-      keyPressed={onKeyPressed}
+      mouseClicked={isDiscovery ? noop : onMouseClicked}
+      mouseMoved={isDiscovery ? noop : onMouseMoved}
+      keyPressed={isDiscovery ? noop : onKeyPressed}
     />
   );
+};
+
+const noop = () => {
+  return;
 };
