@@ -1,0 +1,33 @@
+name: Build and Publish
+
+on:
+  release:
+    types:
+      - created
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version'
+        required: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Build the client image
+        run: docker build . --file packages/client/Dockerfile --tag ghcr.io/studio7t/big-yikes-client:${{ inputs.version || github.event.release.tag_name }}
+
+      - name: Build the server image
+        run: docker build . --file packages/server/Dockerfile --tag ghcr.io/studio7t/big-yikes-server:${{ inputs.version || github.event.release.tag_name }}
+
+      - name: Log in to GitHub Container Registry
+        run: echo ${{ github.token }} | docker login ghcr.io -u studio7t --password-stdin
+
+      - name: Publish images to GitHub Container Registry
+        run: |
+          docker push \
+            ghcr.io/studio7t/big-yikes-client:${{ inputs.version || github.event.release.tag_name }} \
+            ghcr.io/studio7t/big-yikes-server:${{ inputs.version || github.event.release.tag_name }}
