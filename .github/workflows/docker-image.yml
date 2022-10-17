@@ -22,17 +22,25 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Build the client image
-        run: docker build . --file packages/client/Dockerfile --tag ghcr.io/studio7t/big-yikes-client:${{ inputs.version || github.event.release.tag_name }}
+      - name: Log in to the Container registry
+        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build the server image
-        run: docker build . --file packages/server/Dockerfile --tag ghcr.io/studio7t/big-yikes-server:${{ inputs.version || github.event.release.tag_name }}
+      - name: Build and push client Docker image
+        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        with:
+          context: .
+          file: packages/client/Dockerfile
+          push: true
+          tags: ghcr.io/studio7t/big-yikes-client:${{ inputs.version || github.event.release.tag_name }}
 
-      - name: Log in to GitHub Container Registry
-        run: echo ${{ github.token }} | docker login ghcr.io -u studio7t --password-stdin
-
-      - name: Publish cleint image to GitHub Container Registry
-        run: docker push ghcr.io/studio7t/big-yikes-client:${{ inputs.version || github.event.release.tag_name }}
-
-      - name: Publish server image to GitHub Container Registry
-        run: docker push ghcr.io/studio7t/big-yikes-server:${{ inputs.version || github.event.release.tag_name }}
+      - name: Build and push server Docker image
+        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        with:
+          context: .
+          file: packages/server/Dockerfile
+          push: true
+          tags: ghcr.io/studio7t/big-yikes-server:${{ inputs.version || github.event.release.tag_name }}
