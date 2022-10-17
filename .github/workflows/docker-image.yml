@@ -4,6 +4,11 @@ on:
   release:
     types:
       - created
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version'
+        required: true
 
 jobs:
   build:
@@ -18,7 +23,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Log in to the Container registry
-        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+        uses: docker/login-action@v2
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -26,30 +31,30 @@ jobs:
 
       - name: Extract client metadata (tags, labels) for Docker
         id: client-meta
-        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+        uses: docker/metadata-action@v4
         with:
           images: ghcr.io/${{ github.repository }}-client
 
       - name: Build and push client Docker images
-        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        uses: docker/build-push-action@v3
         with:
           context: .
           file: packages/client/Dockerfile
           push: true
-          tags: ${{ steps.client-meta.outputs.tags }}
+          tags: ${{ inputs.version || steps.client-meta.outputs.tags }}
           labels: ${{ steps.client-meta.outputs.labels }}
 
       - name: Extract server metadata (tags, labels) for Docker
         id: server-meta
-        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+        uses: docker/metadata-action@v4
         with:
           images: ghcr.io/${{ github.repository }}-server
 
       - name: Build and push server Docker images
-        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        uses: docker/build-push-action@v3
         with:
           context: .
           file: packages/server/Dockerfile
           push: true
-          tags: ${{ steps.server-meta.outputs.tags }}
+          tags: ${{ inputs.version || steps.server-meta.outputs.tags }}
           labels: ${{ steps.server-meta.outputs.labels }}
