@@ -4,11 +4,6 @@ on:
   release:
     types:
       - created
-  workflow_dispatch:
-    inputs:
-      version:
-        description: 'Version'
-        required: true
 
 jobs:
   build:
@@ -29,18 +24,32 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push client Docker image
+      - name: Extract client metadata (tags, labels) for Docker
+        id: client-meta
+        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+        with:
+          images: ghcr.io/${{ github.repository }}-client
+
+      - name: Build and push client Docker images
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         with:
           context: .
           file: packages/client/Dockerfile
           push: true
-          tags: ghcr.io/studio7t/big-yikes-client:${{ inputs.version || github.event.release.tag_name }}
+          tags: ${{ steps.client-meta.outputs.tags }}
+          labels: ${{ steps.client-meta.outputs.labels }}
 
-      - name: Build and push server Docker image
+      - name: Extract server metadata (tags, labels) for Docker
+        id: server-meta
+        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+        with:
+          images: ghcr.io/${{ github.repository }}-server
+
+      - name: Build and push server Docker images
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         with:
           context: .
           file: packages/server/Dockerfile
           push: true
-          tags: ghcr.io/studio7t/big-yikes-server:${{ inputs.version || github.event.release.tag_name }}
+          tags: ${{ steps.server-meta.outputs.tags }}
+          labels: ${{ steps.server-meta.outputs.labels }}
