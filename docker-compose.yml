@@ -24,3 +24,5 @@ services:
     restart: always
     volumes:
       - ${DB_MOUNT_PATH}:/data/db
+    environment:
+      - MONGO_INITDB_DATABASE
