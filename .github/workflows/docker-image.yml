@@ -1,0 +1,60 @@
+name: Build and Publish
+
+on:
+  release:
+    types:
+      - created
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version'
+        required: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract client metadata (tags, labels) for Docker
+        id: client-meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ghcr.io/${{ github.repository }}-client
+
+      - name: Build and push client Docker images
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          file: packages/client/Dockerfile
+          push: true
+          tags: ${{ inputs.version || steps.client-meta.outputs.tags }}
+          labels: ${{ steps.client-meta.outputs.labels }}
+
+      - name: Extract server metadata (tags, labels) for Docker
+        id: server-meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ghcr.io/${{ github.repository }}-server
+
+      - name: Build and push server Docker images
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          file: packages/server/Dockerfile
+          push: true
+          tags: ${{ inputs.version || steps.server-meta.outputs.tags }}
+          labels: ${{ steps.server-meta.outputs.labels }}
