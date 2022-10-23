@@ -26,7 +26,8 @@ RUN yarn build
 FROM nginx:alpine AS runner
 
 COPY --from=builder /usr/src/app/client/dist /usr/share/nginx/html
-COPY ./packages/client/entrypoint.sh ./
+COPY ./packages/client/server/nginx.conf /etc/nginx/conf.d/default.conf
+COPY ./packages/client/server/entrypoint.sh ./
 
 EXPOSE 80
 CMD ["./entrypoint.sh"]
