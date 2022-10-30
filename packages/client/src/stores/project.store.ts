@@ -1,6 +1,5 @@
 import { Block, growBounds, Structure } from '@big-yikes/lib';
 import create from 'zustand';
-import { useBinStore } from './bin.store';
 import { HistoryAction } from './history';
 
 interface ProjectState {
@@ -46,9 +45,6 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
 }));
 
 export const ableToAdd = (block: Block) => {
-  const { bin } = useBinStore.getState();
-  if (bin[block.type] === 0) return false;
-
   const nearbyBlocks = useProjectStore
     .getState()
     .structure.getBlocksInBounds(growBounds(block.bounds));

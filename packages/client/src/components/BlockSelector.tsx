@@ -4,7 +4,6 @@ import {
   BlockTypeSlug,
   blockTypeSlugs,
 } from '@big-yikes/lib';
-import { useBinStore } from '../stores/bin.store';
 import { useTentativeStore } from '../stores/tentative.store';
 import { CANVAS_WIDTH, GRID_BORDER_WIDTH } from '../utils/dimensions';
 
@@ -22,8 +21,6 @@ export const BlockSelector = () => {
 };
 
 const BlockSelectorOption = ({ blockType }: { blockType: BlockTypeSlug }) => {
-  const { bin } = useBinStore((state) => ({ bin: state.bin }));
-
   const { activeBlockType, setBlockType } = useTentativeStore((state) => ({
     activeBlockType: state.blockType,
     setBlockType: state.setBlockType,
@@ -67,7 +64,6 @@ const BlockSelectorOption = ({ blockType }: { blockType: BlockTypeSlug }) => {
           ))}
         </svg>
       </button>
-      <p className="text-center text-primary">{bin[blockType]}</p>
     </div>
   );
 };

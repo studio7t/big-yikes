@@ -6,18 +6,14 @@ import tickUrl from '../assets/sounds/tick.mp3';
 import { drawBlock } from '../canvas-actions/draw-block';
 import { drawGrid } from '../canvas-actions/draw-grid';
 import { applyTransforms, flipCanvas } from '../canvas-actions/transform';
-import { useBinStore } from '../stores/bin.store';
 import { useDiscoveryStore } from '../stores/discovery.store';
-import { combineActions, history } from '../stores/history';
+import { history } from '../stores/history';
 import {
   ableToAdd,
   ableToRemove,
   useProjectStore,
 } from '../stores/project.store';
-import {
-  chooseNextAvailableBlockType,
-  useTentativeStore,
-} from '../stores/tentative.store';
+import { useTentativeStore } from '../stores/tentative.store';
 import { snapMouseToGridCoords } from '../utils/coord-conversion';
 import { TOTAL_CANAS_WIDTH, TOTAL_CANVAS_HEIGHT } from '../utils/dimensions';
 import { isMouseInCanvas } from '../utils/mouse-in-canvas';
@@ -31,12 +27,6 @@ export const Board = () => {
       clear: state.clear,
     })
   );
-
-  const { addToBin, removeFromBin, bin } = useBinStore((state) => ({
-    bin: state.bin,
-    addToBin: state.addToBin,
-    removeFromBin: state.removeFromBin,
-  }));
 
   const { hoveringBlock, setHoveringBlock, blockType } = useTentativeStore(
     (state) => ({
@@ -82,20 +72,14 @@ export const Board = () => {
 
     if (blockAtMouse) {
       if (ableToRemove(blockAtMouse)) {
-        history.addAction(
-          combineActions(removeBlock(blockAtMouse), addToBin(blockAtMouse.type))
-        );
+        history.addAction(removeBlock(blockAtMouse));
       }
     } else {
       const block = new Block(blockType, mouseCoords);
       if (ableToAdd(block)) {
-        history.addAction(
-          combineActions(removeFromBin(block.type), addBlock(block))
-        );
+        history.addAction(addBlock(block));
 
         new Audio(snapUrl).play();
-
-        if (bin[block.type] === 0) chooseNextAvailableBlockType();
       }
     }
 
@@ -112,7 +96,7 @@ export const Board = () => {
 
     if (shouldUpdateHoveringBlock) {
       const block = new Block(blockType, snappedMousePos);
-      if (!isMouseInCanvas(p5) || bin[blockType] === 0 || !ableToAdd(block)) {
+      if (!isMouseInCanvas(p5) || !ableToAdd(block)) {
         setHoveringBlock(null);
       } else {
         setHoveringBlock(block);

@@ -40,8 +40,6 @@ export const discoveryRoutes = async (fastify: FastifyInstance) => {
         return;
       }
 
-      // TODO validate against bin
-
       const structureId = await insertStructureIfNotExists(structure);
 
       const { username } = request.user as { username: string };
