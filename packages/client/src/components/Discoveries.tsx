@@ -1,5 +1,6 @@
 import { useAuth0 } from '@auth0/auth0-react';
-import { ReactNode, useEffect, useRef, useState } from 'react';
+import { format } from 'date-fns';
+import { ReactNode } from 'react';
 import { useDiscoveries } from '../hooks/discoveries';
 import { useDiscoveryStore } from '../stores/discovery.store';
 import { history } from '../stores/history';
@@ -65,47 +66,35 @@ export const Discoveries = () => {
   ) : null;
 };
 
-// TODO human readable dates
 const RecordList = () => {
-  const [tableHeight, setTableHeight] = useState(0);
-  const tableRef = useRef<HTMLTableElement>(null);
   const { discoveries } = useDiscoveryStore((state) => ({
     discoveries: state.discoveries,
   }));
 
-  useEffect(() => {
-    if (tableRef.current) setTableHeight(tableRef.current.offsetHeight);
-  }, [tableRef, discoveries]);
-
-  const maxTableHeight = 256;
-
   return (
-    <div className="relative" style={{ height: `${maxTableHeight}px` }}>
-      <div className="h-full overflow-scroll">
-        <table ref={tableRef}>
-          <thead className="text-xl font-ptsans-bold text-left tracking-wider">
-            <tr>
-              <th></th>
-              <th>USER</th>
-              <th>FOUND ON</th>
-            </tr>
-          </thead>
-          <tbody className="font-ptsans tracking-wider text-lg">
-            {discoveries.map((discovery, index) => {
-              return (
-                <tr key={index}>
-                  <td className="pr-4">{discoveries.length - index}.</td>
-                  <td className="pr-8">{discovery.username}</td>
-                  <td>{new Date(discovery.time).toISOString()}</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
-      {tableHeight > maxTableHeight ? (
-        <div className="absolute bottom-0 h-20 w-full bg-gradient-to-b from-transparent to-white" />
-      ) : null}
+    <div className="h-[240px] px-8 overflow-auto">
+      <table>
+        <thead className="text-xl font-ptsans-bold text-left tracking-wider">
+          <tr>
+            <th></th>
+            <th>USER</th>
+            <th>FOUND ON</th>
+          </tr>
+        </thead>
+        <tbody className="font-ptsans tracking-wider text-lg">
+          {discoveries.map((discovery, index) => {
+            return (
+              <tr key={index}>
+                <td className="pr-4">{discoveries.length - index}.</td>
+                <td className="pr-8">{discovery.username}</td>
+                <td>
+                  {format(new Date(discovery.time), 'MMM dd yyyy, hh:MM aa')}
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
     </div>
   );
 };
