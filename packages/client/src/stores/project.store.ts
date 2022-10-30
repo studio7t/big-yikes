@@ -5,6 +5,8 @@ import { HistoryAction } from './history';
 
 interface ProjectState {
   structure: Structure;
+  /** setStructure should only be called with an empty undo/redo stack */
+  setStructure: (structure: Structure) => void;
   addBlock: (block: Block) => HistoryAction;
   removeBlock: (block: Block) => HistoryAction;
   clear: () => HistoryAction;
@@ -12,6 +14,7 @@ interface ProjectState {
 
 export const useProjectStore = create<ProjectState>((set, get) => ({
   structure: new Structure([]),
+  setStructure: (structure: Structure) => set({ structure }),
   addBlock: (block: Block) => {
     const forward = () =>
       set({ structure: get().structure.withBlockAdded(block) });

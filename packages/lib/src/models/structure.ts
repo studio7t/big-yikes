@@ -3,11 +3,8 @@ import objectHash from 'object-hash';
 import RBush from 'rbush';
 import { Bounds, Vector2D } from '../types';
 import { isEqual as vectorIsEqual } from '../utils';
-import { Block, BlockBounds } from './block';
+import { Block, BlockBounds, BlockFingerprint } from './block';
 import { BlockGraph } from './block-graph';
-
-export type BlockFingerprint = { type: string; position: Vector2D };
-export type BlockFingerprintSet = Set<BlockFingerprint>;
 
 export class Structure {
   blocks: Block[];
@@ -24,12 +21,8 @@ export class Structure {
     return objectHash(this.fingerprintSet);
   }
 
-  get fingerprintSet(): BlockFingerprintSet {
-    return new Set(
-      this.blocks.map((b) => {
-        return { type: b.type, position: b.position };
-      })
-    );
+  get fingerprintSet(): Set<BlockFingerprint> {
+    return new Set(this.blocks.map((b) => b.fingerprint));
   }
 
   withBlockAdded(block: Block): Structure {

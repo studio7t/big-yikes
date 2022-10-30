@@ -1,11 +1,11 @@
 import { Block, isEqual } from '@big-yikes/lib';
 import p5Types from 'p5';
 import Sketch from 'react-p5';
-import { drawBlock } from '../actions/draw-block';
-import { drawGrid } from '../actions/draw-grid';
-import { applyTransforms, flipCanvas } from '../actions/transform';
 import snapUrl from '../assets/sounds/snap.mp3';
 import tickUrl from '../assets/sounds/tick.mp3';
+import { drawBlock } from '../canvas-actions/draw-block';
+import { drawGrid } from '../canvas-actions/draw-grid';
+import { applyTransforms, flipCanvas } from '../canvas-actions/transform';
 import { useBinStore } from '../stores/bin.store';
 import { useDiscoveryStore } from '../stores/discovery.store';
 import { combineActions, history } from '../stores/history';

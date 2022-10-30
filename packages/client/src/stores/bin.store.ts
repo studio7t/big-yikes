@@ -4,12 +4,15 @@ import { HistoryAction } from './history';
 
 interface BinState {
   bin: Bin;
+  /** setBin should only be called with an empty undo/redo stack */
+  setBin: (bin: Bin) => void;
   addToBin: (blockType: BlockTypeSlug, count?: number) => HistoryAction;
   removeFromBin: (blockType: BlockTypeSlug, count?: number) => HistoryAction;
 }
 
 export const useBinStore = create<BinState>((set, get) => ({
   bin: defaultBin,
+  setBin: (bin: Bin) => set({ bin }),
   addToBin: (blockType: BlockTypeSlug, count = 1) => {
     const forward = () => {
       const { bin } = get();

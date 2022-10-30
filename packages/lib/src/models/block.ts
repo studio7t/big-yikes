@@ -8,6 +8,8 @@ export interface BlockBounds extends Bounds {
   block: Block;
 }
 
+export type BlockFingerprint = { type: BlockTypeSlug; position: Vector2D };
+
 export class Block {
   id: string;
   type: BlockTypeSlug;
@@ -19,7 +21,7 @@ export class Block {
     this.position = position;
   }
 
-  get coordinates() {
+  get coordinates(): Vector2D[] {
     return blockTypes[this.type].coordinates.map((coord) => ({
       x: coord.x + this.position.x,
       y: coord.y + this.position.y,
@@ -45,6 +47,10 @@ export class Block {
       }
     );
     return { ...bounds, block: this };
+  }
+
+  get fingerprint(): BlockFingerprint {
+    return { type: this.type, position: this.position };
   }
 
   isValid(others: Block[]) {

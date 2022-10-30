@@ -2,9 +2,12 @@ import { AuthButton } from './components/AuthButton';
 import { BlockSelector } from './components/BlockSelector';
 import { Board } from './components/Board';
 import { Discoveries } from './components/Discoveries';
+import { useRecoverSession } from './hooks/recover-session';
 
 // TODO add auth loading state
 const App = () => {
+  useRecoverSession();
+
   return (
     <div className="p-4 pb-0">
       <div className="absolute top-8 right-4">
@@ -19,8 +22,8 @@ const App = () => {
 
       <div className="flex flex-col space-y-4 items-center select-none">
         <div className="relative">
-          <Discoveries />
           <Board />
+          <Discoveries />
         </div>
         <BlockSelector />
       </div>

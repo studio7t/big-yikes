@@ -54,5 +54,5 @@ export const useDiscoveries = () => {
     } else {
       setIsDiscovery(false);
     }
-  }, [structure]);
+  }, [structure, isAuthenticated, getAccessTokenSilently]);
 };

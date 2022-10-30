@@ -88,7 +88,7 @@ const RecordList = () => {
                 <td className="pr-4">{discoveries.length - index}.</td>
                 <td className="pr-8">{discovery.username}</td>
                 <td>
-                  {format(new Date(discovery.time), 'MMM dd yyyy, hh:MM aa')}
+                  {format(new Date(discovery.time), 'MMM dd yyyy, hh:mm aa')}
                 </td>
               </tr>
             );
