@@ -1,10 +1,9 @@
-import { MongoClient } from 'mongodb';
+import path from 'path';
+import { Pool } from 'pg';
+import { migrate } from 'postgres-migrations';
 
-const url = process.env.MONGO_URL ?? 'mongodb://localhost:27017';
-const client = new MongoClient(url);
+export const db = new Pool();
 
-export const db = client.db('big_yikes');
-
-export const close = async () => {
-  client.close();
+export const performMigrations = async () => {
+  await migrate({ client: db }, path.join(__dirname, 'migrations'));
 };

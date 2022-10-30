@@ -20,9 +20,11 @@ services:
     env_file: ./packages/server/.env
 
   db:
-    image: mongo:4.2
+    image: postgres:15.0
     restart: always
     volumes:
-      - ${DB_MOUNT_PATH}:/data/db
+      - ${DB_MOUNT_PATH}:/var/lib/postgresql/data
     environment:
-      - MONGO_INITDB_DATABASE
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=big_yikes

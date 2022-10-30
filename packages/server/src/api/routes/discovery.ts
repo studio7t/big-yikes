@@ -30,8 +30,6 @@ export const discoveryRoutes = async (fastify: FastifyInstance) => {
       preValidation: [fastify.authenticate],
     },
     async (request, reply) => {
-      const collection = db.collection('discoveries');
-
       const blocks = request.body.blocks.map(
         (b) => new Block(b.type, b.position)
       );
@@ -48,25 +46,31 @@ export const discoveryRoutes = async (fastify: FastifyInstance) => {
 
       const { username } = request.user as { username: string };
 
-      const alreadyDiscovered = await collection.findOne({
-        structure_id: structureId,
-        username,
-      });
-      if (!alreadyDiscovered) {
-        await collection.insertOne({
-          structure_id: structureId,
-          time: Date.now(),
-          username,
-        });
+      const isDuplicateDiscovery =
+        (
+          await db.query(
+            'SELECT id FROM discoveries WHERE structure_id = $1 AND username = $2',
+            [structureId, username]
+          )
+        ).rowCount > 0;
+      if (!isDuplicateDiscovery) {
+        await db.query(
+          'INSERT INTO discoveries(structure_id, time, username) VALUES($1, $2, $3)',
+          [structureId, Date.now(), username]
+        );
       }
 
-      const allDiscoveries = await collection
-        .find({ structure_id: structureId })
-        .toArray();
-      const formattedDiscoveries: Discovery[] = allDiscoveries
+      const allDiscoveriesForStructure = (
+        await db.query(
+          'SELECT structure_id, time, username FROM discoveries WHERE structure_id = $1',
+          [structureId]
+        )
+      ).rows;
+      console.log(allDiscoveriesForStructure);
+      const formattedDiscoveries: Discovery[] = allDiscoveriesForStructure
         .map((discovery) => ({
           structureId: discovery.structure_id,
-          time: discovery.time,
+          time: JSON.parse(discovery.time),
           username: discovery.username,
         }))
         .sort((a, b) => b.time - a.time);
@@ -75,14 +79,14 @@ export const discoveryRoutes = async (fastify: FastifyInstance) => {
   );
 };
 
-const insertStructureIfNotExists = async (structure: Structure) => {
-  const collection = db.collection('structures');
-
-  const dbStructuresWithSameHash = await collection
-    .find({
-      hash: structure.hash,
-    })
-    .toArray();
+const insertStructureIfNotExists = async (
+  structure: Structure
+): Promise<number> => {
+  const dbStructuresWithSameHash = (
+    await db.query('SELECT id, blocks FROM structures WHERE hash = $1', [
+      structure.hash,
+    ])
+  ).rows;
 
   for (const dbStructureWithSameHash of dbStructuresWithSameHash) {
     const structureWithSameHash = new Structure(
@@ -92,14 +96,16 @@ const insertStructureIfNotExists = async (structure: Structure) => {
     );
 
     if (structureWithSameHash.isEqual(structure)) {
-      return dbStructureWithSameHash._id;
+      return dbStructureWithSameHash.id;
     }
   }
 
-  const insertedStructure = await collection.insertOne({
-    hash: structure.hash,
-    blocks: structure.blocks,
-  });
+  const insertedStructure = (
+    await db.query(
+      'INSERT INTO structures(hash, blocks) VALUES($1, $2) RETURNING id',
+      [structure.hash, JSON.stringify(Array.from(structure.fingerprintSet))]
+    )
+  ).rows[0];
 
-  return insertedStructure.insertedId;
+  return insertedStructure.id;
 };
