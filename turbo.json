@@ -9,6 +9,20 @@
         "dist/**"
       ]
     },
+    "package": {
+      "dependsOn": [
+        "build"
+      ],
+      "outputs": [
+        "out/**"
+      ]
+    },
+    "deploy": {
+      "dependsOn": [
+        "package"
+      ],
+      "cache": false
+    },
     "dev": {
       "cache": false
     },

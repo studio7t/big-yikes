@@ -1,0 +1,26 @@
+{
+  "name": "@big-yikes/cdk",
+  "version": "0.0.0",
+  "bin": {
+    "cdk": "bin/cdk.js"
+  },
+  "scripts": {
+    "build": "tsup src/redirect.ts --format cjs",
+    "package": "mkdir -p out && zip -j out/redirect.zip dist/redirect.js",
+    "deploy": "cdk synth"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.109",
+    "@types/node": "^18.11.9",
+    "aws-cdk": "^2.52.0",
+    "ts-node": "^10.9.1",
+    "tsup": "^6.5.0",
+    "typescript": "^4.9.3"
+  },
+  "dependencies": {
+    "@big-yikes/client": "*",
+    "@big-yikes/server": "*",
+    "aws-cdk-lib": "^2.52.0",
+    "constructs": "^10.1.173"
+  }
+}
