@@ -1,5 +1,3 @@
-// TODO: ZIPS
-
 import { join } from 'path';
 
 import * as cdk from 'aws-cdk-lib';
@@ -57,6 +55,7 @@ export class CdkStack extends cdk.Stack {
     });
 
     // Create the CloudFront Origin for the API
+    // TODO: Make API private and give permissions to CloudFront
     const apiOrigin = new origins.RestApiOrigin(api.gateway);
 
     // Create the CloudFront distribution
