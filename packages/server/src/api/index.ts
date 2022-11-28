@@ -3,7 +3,7 @@ import fastify from 'fastify';
 import fastifyAuth0Verify from 'fastify-auth0-verify';
 import { discoveryRoutes } from './routes/discovery';
 
-const app = fastify({ logger: true });
+export const app = fastify({ logger: true });
 
 app.setErrorHandler((error, request, reply) => {
   app.log.error(error);
@@ -18,12 +18,3 @@ app.register(fastifyAuth0Verify, {
 });
 
 app.register(discoveryRoutes);
-
-export const start = async () => {
-  try {
-    await app.listen({ port: 3001, host: '0.0.0.0' });
-  } catch (err) {
-    app.log.error(err);
-    process.exit(1);
-  }
-};

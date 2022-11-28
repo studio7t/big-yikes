@@ -13,6 +13,7 @@
     "lib": "yarn workspace @big-yikes/lib",
     "server": "yarn workspace @big-yikes/server",
     "build": "turbo run build",
+    "deploy": "turbo run deploy",
     "dev": "turbo run dev",
     "lint": "turbo run lint"
   },

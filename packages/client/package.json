@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
+    "package": "mkdir -p out && cd dist/ && zip -r client.zip ./* && cd - && mv -v dist/client.zip out/client.zip",
     "preview": "vite preview",
     "lint": "eslint ./src && prettier --check ./src",
     "test": "vitest"
@@ -25,6 +26,8 @@
     "@typescript-eslint/parser": "^5.28.0",
     "@vitejs/plugin-react": "^1.3.0",
     "autoprefixer": "^10.4.7",
+    "aws-cdk-lib": "^2.52.0",
+    "constructs": "^10.1.173",
     "eslint": "^8.17.0",
     "eslint-plugin-react": "^7.30.0",
     "postcss": "^8.4.14",
