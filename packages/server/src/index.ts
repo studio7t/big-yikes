@@ -1,9 +1,9 @@
 import 'dotenv/config';
 import { app } from './api';
-import { performMigrations } from './db';
+import { BaseTable } from './db';
 
 (async () => {
-  await performMigrations();
+  await BaseTable.sync();
 
   try {
     await app.listen({ port: 3001, host: '0.0.0.0' });

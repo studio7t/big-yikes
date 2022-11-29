@@ -11,6 +11,8 @@
     "lint": "eslint ./src && prettier --check ./src"
   },
   "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.218.0",
+    "@aws-sdk/lib-dynamodb": "^3.218.0",
     "@big-yikes/lib": "*",
     "@fastify/aws-lambda": "^3.1.3",
     "@fastify/cors": "^8.1.0",
