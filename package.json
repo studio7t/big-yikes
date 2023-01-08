@@ -9,6 +9,7 @@
     "packages/*"
   ],
   "scripts": {
+    "cdk": "yarn workspace @big-yikes/cdk",
     "client": "yarn workspace @big-yikes/client",
     "lib": "yarn workspace @big-yikes/lib",
     "server": "yarn workspace @big-yikes/server",

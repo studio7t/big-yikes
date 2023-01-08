@@ -1,6 +1,12 @@
-import awsLambdaFastify from '@fastify/aws-lambda';
+import { Handler, APIGatewayEvent } from 'aws-lambda';
+import serverless, { Application } from 'serverless-http';
 import { app } from './api';
 
-const proxy = awsLambdaFastify(app);
+const appHandler = serverless(app as unknown as Application, {
+  basePath: '/api',
+});
 
-exports.handler = proxy;
+export const handler: Handler<APIGatewayEvent> = async (event, context) => {
+  const result = await appHandler(event, context);
+  return result;
+};
