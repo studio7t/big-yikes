@@ -2,25 +2,32 @@
   "$schema": "https://turborepo.org/schema.json",
   "pipeline": {
     "build": {
-      "dependsOn": [
-        "^build"
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**"]
+    },
+    "client#build": {
+      "dependsOn": ["^build"],
+      "inputs": [
+        "src/**/*",
+        "public/**/*",
+        ".env",
+        "index.html",
+        "package.json",
+        "postcss.config.js",
+        "tailwind.config.js",
+        "tsconfig.json",
+        "tsconfig.node.json",
+        "vite.config.js",
+        "yarn.lock"
       ],
-      "outputs": [
-        "dist/**"
-      ]
+      "outputs": ["dist/**"]
     },
     "package": {
-      "dependsOn": [
-        "build"
-      ],
-      "outputs": [
-        "out/**"
-      ]
+      "dependsOn": ["build"],
+      "outputs": ["out/**"]
     },
     "deploy": {
-      "dependsOn": [
-        "package"
-      ],
+      "dependsOn": ["package"],
       "cache": false
     },
     "dev": {
