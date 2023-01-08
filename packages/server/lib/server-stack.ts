@@ -23,18 +23,6 @@ export class ServerConstruct extends Construct {
   constructor(scope: Construct, id: string, { zipFile }: ServerConstructProps) {
     super(scope, id);
 
-    // Create the API lambda
-    this.lambda = new lambda.Function(this, 'ApiFunction', {
-      runtime: lambda.Runtime.NODEJS_16_X,
-      handler: 'handler.handler',
-      code: lambda.Code.fromAsset(zipFile),
-    });
-
-    // Create the API gateway
-    this.gateway = new apigw.LambdaRestApi(this, 'ApiGateway', {
-      handler: this.lambda,
-    });
-
     // Create the DynamoDB table
     this.table = new ddb.Table(this, 'BaseTable', {
       partitionKey: sdkToCdk({
@@ -71,6 +59,21 @@ export class ServerConstruct extends Construct {
     })) {
       this.table.addLocalSecondaryIndex(lsi);
     }
+
+    // Create the API lambda
+    this.lambda = new lambda.Function(this, 'ApiFunction', {
+      runtime: lambda.Runtime.NODEJS_16_X,
+      handler: 'handler.handler',
+      code: lambda.Code.fromAsset(zipFile),
+      environment: {
+        DDB_TABLE_NAME: this.table.tableName,
+      },
+    });
+
+    // Create the API gateway
+    this.gateway = new apigw.LambdaRestApi(this, 'ApiGateway', {
+      handler: this.lambda,
+    });
 
     // Give the Lambda full access to the table.
     this.table.grantFullAccess(this.lambda);

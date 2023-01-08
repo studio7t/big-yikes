@@ -6,6 +6,7 @@ import {
   CreateTableCommandInput,
   UpdateTableCommand,
   DeleteTableCommand,
+  ProjectionType,
 } from '@aws-sdk/client-dynamodb';
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
 
@@ -101,12 +102,53 @@ class BaseTableClass extends Table {
   options: TableOptions = {
     TableName: process.env.DDB_TABLE_NAME || 'BaseTable',
     AttributeDefinitions: [
-      { AttributeName: 'userId', AttributeType: 'S' },
-      { AttributeName: 'compoundId', AttributeType: 'S' },
+      // PK is unique item id
+      // Get one user or discovery by unique id
+      { AttributeName: 'id', AttributeType: 'S' },
+      // USER
+      // PK is literal "discovery", SK is numDiscoveries
+      // get the number of discoveries that each user has made (leaderboard)
+      // DISCOVERY
+      // PK is userId, SK is datetime
+      // list all a discoveries that a specific user has made
+      { AttributeName: 'gsi1_pk', AttributeType: 'S' },
+      { AttributeName: 'gsi1_sk', AttributeType: 'N' },
+      // PK is structureHash, SK is datetime
+      // find all discoveries matching a certain structure
+      { AttributeName: 'gsi2_pk', AttributeType: 'S' },
+      { AttributeName: 'gsi2_sk', AttributeType: 'N' },
+      // PK is userId, SK is structureHash
+      // get users by id and structure hash to see if user
+      // has already made a specific discovery
+      { AttributeName: 'gsi3_pk', AttributeType: 'S' },
+      { AttributeName: 'gsi3_sk', AttributeType: 'S' },
     ],
-    KeySchema: [
-      { AttributeName: 'userId', KeyType: 'HASH' },
-      { AttributeName: 'compoundId', KeyType: 'RANGE' },
+    KeySchema: [{ AttributeName: 'id', KeyType: 'HASH' }],
+    GlobalSecondaryIndexes: [
+      {
+        IndexName: 'GSI1',
+        KeySchema: [
+          { AttributeName: 'gsi1_pk', KeyType: 'HASH' },
+          { AttributeName: 'gsi1_sk', KeyType: 'RANGE' },
+        ],
+        Projection: { ProjectionType: ProjectionType.ALL },
+      },
+      {
+        IndexName: 'GSI2',
+        KeySchema: [
+          { AttributeName: 'gsi2_pk', KeyType: 'HASH' },
+          { AttributeName: 'gsi2_sk', KeyType: 'RANGE' },
+        ],
+        Projection: { ProjectionType: ProjectionType.ALL },
+      },
+      {
+        IndexName: 'GSI3',
+        KeySchema: [
+          { AttributeName: 'gsi3_pk', KeyType: 'HASH' },
+          { AttributeName: 'gsi3_sk', KeyType: 'RANGE' },
+        ],
+        Projection: { ProjectionType: ProjectionType.ALL },
+      },
     ],
     BillingMode: 'PAY_PER_REQUEST',
   };

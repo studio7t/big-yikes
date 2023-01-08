@@ -7,7 +7,7 @@
   "scripts": {
     "build": "tsup src/redirect.ts --format cjs",
     "package": "mkdir -p out && zip -j out/redirect.zip dist/redirect.js",
-    "deploy": "cdk synth"
+    "deploy": "cdk deploy"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.109",

@@ -17,6 +17,12 @@ export class Structure {
     this.tree.load(blocks.map((b) => b.bounds));
   }
 
+  static fromFingerprints(fingerprints: BlockFingerprint[]) {
+    return new Structure(
+      fingerprints.map((f) => new Block(f.type, f.position))
+    );
+  }
+
   get hash() {
     return objectHash(this.fingerprintSet);
   }
